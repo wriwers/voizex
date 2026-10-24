@@ -6,6 +6,9 @@ const http = require('http'), fs = require('fs'), path = require('path'), crypto
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.SECRET || crypto.randomBytes(32).toString('hex');
 const PUB = path.join(__dirname, 'public'), DECK = process.env.DECK_PATH || (fs.existsSync('/etc/secrets/deck.pdf') ? '/etc/secrets/deck.pdf' : path.join(__dirname, 'private', 'deck.pdf'));
+// Render Secret Files hold text, so the deck may be stored there as base64; it is decoded once at start.
+const deckPdf = () => { const b = fs.readFileSync(DECK); return b.subarray(0, 4).toString() === '%PDF' ? b : Buffer.from(b.toString().replace(/\s+/g, ''), 'base64'); };
+let DECK_BUF = null; const deck = () => DECK_BUF || (DECK_BUF = deckPdf());
 const FREE = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com outlook.com hotmail.com live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net mail.com yandex.ru yandex.com ya.ru mail.ru inbox.ru list.ru bk.ru rambler.ru zoho.com tutanota.com tuta.io hey.com qq.com 163.com 126.com web.de t-online.de libero.it orange.fr free.fr laposte.net seznam.cz wp.pl o2.pl rediffmail.com fastmail.com hushmail.com duck.com mailinator.com guerrillamail.com 10minutemail.com tempmail.com temp-mail.org yopmail.com'.split(' '));
 const WEEK = 7 * 24 * 3600e3;
 
@@ -66,7 +69,7 @@ async function onCallback(q) {
   if (act !== 'ok') return answer('');
   answer('Sending…');
   try {
-    const pdf = fs.readFileSync(DECK).toString('base64');
+    const pdf = deck().toString('base64');
     await mail(r.e, r.n, 'VOIZEX pitch deck', `Good afternoon, ${r.n}. This is Ann Fedotova, founder of VOIZEX. The pitch deck for you is attached.`, { name: 'VOIZEX-pitch-deck.pdf', content: pdf });
   } catch (e) {
     console.error(e.message);
@@ -114,7 +117,7 @@ async function route(req, res) {
     if (!t || Date.now() > t.exp) { res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('This link has expired. Request the deck again on the VOIZEX site.'); }
     if (Date.now() - t.iat > 120e3 && !limited('d' + t.e + t.iat, 1, 30 * 60e3)) await tg(`<b>Deck opened again</b>\n${esc(t.n)}, ${esc(t.f)}`);
     res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="VOIZEX-deck.pdf"', 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' });
-    return fs.createReadStream(DECK).pipe(res);
+    return res.end(deck());
   }
   if (req.method === 'GET' || req.method === 'HEAD') {
     let f = path.normalize(path.join(PUB, decodeURIComponent(u.pathname)));
