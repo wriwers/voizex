@@ -585,6 +585,23 @@ section{padding-block:44px}.fband{padding-block:44px!important}
 .hooks{gap:4px}.hook{width:calc((100% - 36px)/10)}
 .mnav{padding-inline:28px}
 }
+
+/* articles as lines */
+.pcards,.farts .pcards{display:block!important;border-top:1px solid var(--line)}
+.pcard,.farts .pcard{display:flex!important;flex-direction:row!important;justify-content:space-between;align-items:baseline;gap:20px;min-height:0!important;padding:18px 0!important;background:none!important;box-shadow:none!important;border-radius:0;border-bottom:1px solid var(--line)}
+.pcard:hover{transform:none;color:var(--accent)}
+.pcard span,.farts .pcard span{font-size:18px!important;line-height:1.3}
+.pcard em{flex:none;font-size:14px}.pcard em::after{content:" ↗"}
+:root[data-theme="dark"] .pcard{background:none!important}
+@media(max-width:560px){.pcard,.farts .pcard{padding:15px 0!important}.pcard span,.farts .pcard span{font-size:16px!important}}
+/* 3D mobile */
+@media(max-width:860px){
+#key .vitrine{aspect-ratio:3/4}
+#key .lead{display:none}
+#key .v3d-ctrl{margin-top:22px}
+#key .v3d-info{margin-top:18px}
+#key .v3d-info #v3dSpecs{display:none}
+}
 </style></head><body>
 
 <header class="top" id="top"><div class="wrap bar"><a class="mark" href="#lobby">VOIZEX</a>
