@@ -570,11 +570,20 @@ section{padding-block:44px}.fband{padding-block:44px!important}
 .vitrine{box-shadow:0 0 0 6px var(--vit-frame)}
 }
 @media(max-width:560px){
-.floor{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
-.door,.door.open{aspect-ratio:3/3.7!important}
-.door .dn{font-size:24px}.dname{font-size:11.5px!important;text-align:center;line-height:1.2;padding:0 4px}
+.floor{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important}
+.door,.door.open{aspect-ratio:3/4.3!important}
+.door .dn{font-size:34px}.dname{font-size:13px!important;text-align:center;line-height:1.25;padding:0 8px}
 .opt{padding:9px 12px!important;font-size:14px!important}
 .quiz .q{font-size:20px}
+}
+@media(max-width:560px){
+.wrap{padding-inline:28px}
+.sheet::before{position:static;display:block;margin-bottom:6px;font-size:17px}
+.sheet{padding:30px 24px!important;gap:28px}
+.sheet .thoughts p{font-size:19px!important;line-height:1.3}
+.sheet .page{font-size:14px!important;line-height:1.7}
+.hooks{gap:4px}.hook{width:calc((100% - 36px)/10)}
+.mnav{padding-inline:28px}
 }
 </style></head><body>
 
