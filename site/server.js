@@ -7,11 +7,17 @@ const PORT = process.env.PORT || 3000;
 const SECRET = process.env.SECRET || crypto.randomBytes(32).toString('hex');
 const PUB = path.join(__dirname, 'public'), DECK = process.env.DECK_PATH || (fs.existsSync('/etc/secrets') ? '/etc/secrets/deck.pdf' : path.join(__dirname, 'private', 'deck.pdf'));
 // Render Secret Files hold text, so the deck may be stored there as base64; it is decoded once at start.
-const deckFile = () => { if (fs.existsSync(DECK)) return fs.readFileSync(DECK);
+// The deck ships encrypted in site/deck.enc; the key is derived from the bot token, so it opens only where the token lives.
+// A new bot token means re-encrypting the deck.
+const deckEnc = () => { const f = path.join(__dirname, 'deck.enc'), t = process.env.TELEGRAM_BOT_TOKEN; if (!t || !fs.existsSync(f)) return Buffer.alloc(0);
+  const b = fs.readFileSync(f), key = crypto.createHmac('sha256', t).update('voizex-deck').digest(), d = crypto.createDecipheriv('aes-256-gcm', key, b.subarray(0, 12));
+  d.setAuthTag(b.subarray(12, 28)); return Buffer.concat([d.update(b.subarray(28)), d.final()]); };
+const deckFile = () => { if (fs.existsSync(DECK) && fs.statSync(DECK).size) return fs.readFileSync(DECK);
+  if (!fs.existsSync(path.dirname(DECK))) return deckEnc();
   const dir = path.dirname(DECK), parts = fs.readdirSync(dir).filter(f => f.startsWith('deck.part.')).sort();
-  return Buffer.concat(parts.map(f => fs.readFileSync(path.join(dir, f)))); };
+  return parts.length ? Buffer.concat(parts.map(f => fs.readFileSync(path.join(dir, f)))) : deckEnc(); };
 const deckPdf = () => { const b = deckFile(); return b.subarray(0, 4).toString() === '%PDF' ? b : Buffer.from(b.toString().replace(/\s+/g, ''), 'base64'); };
-let DECK_BUF = null; const deck = () => DECK_BUF || (DECK_BUF = deckPdf());
+let DECK_BUF = null; const deck = () => { if (!DECK_BUF || !DECK_BUF.length) DECK_BUF = deckPdf(); return DECK_BUF; };
 const FREE = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com outlook.com hotmail.com live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net mail.com yandex.ru yandex.com ya.ru mail.ru inbox.ru list.ru bk.ru rambler.ru zoho.com tutanota.com tuta.io hey.com qq.com 163.com 126.com web.de t-online.de libero.it orange.fr free.fr laposte.net seznam.cz wp.pl o2.pl rediffmail.com fastmail.com hushmail.com duck.com mailinator.com guerrillamail.com 10minutemail.com tempmail.com temp-mail.org yopmail.com'.split(' '));
 const WEEK = 7 * 24 * 3600e3;
 
