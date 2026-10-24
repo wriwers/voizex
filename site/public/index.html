@@ -498,6 +498,12 @@ nav a{font-family:var(--mono);font-size:17px;letter-spacing:.01em}
 .mk .from{margin-top:4px}
 .acc-b{padding-bottom:clamp(48px,6vw,72px)}
 @media(max-width:860px){.gsplit{grid-template-columns:minmax(0,1fr)}}
+
+.qsplit{align-items:start}
+.qhead h2{font-size:clamp(40px,4.4vw,64px);line-height:1.05}
+.qhead .lead{margin-top:20px;max-width:30em;font-size:17px;line-height:1.7;color:var(--ink2)}
+#queue .desk{padding-top:clamp(6px,1vw,14px)}
+#wlDream{min-height:0;height:44px}
 </style></head><body>
 
 <header class="top" id="top"><div class="wrap bar"><a class="mark" href="#lobby">VOIZEX</a>
@@ -597,8 +603,8 @@ nav a{font-family:var(--mono);font-size:17px;letter-spacing:.01em}
   </div>
 </div></section>
 
-<section id="queue"><div class="wrap split">
-  <div><h2>Reserve your room.</h2><p class="sub2">Early access to the first VOIZEX devices.</p><p class="lead">The first guests in the queue get the first devices. We will write when your room is ready.</p></div>
+<section id="queue"><div class="wrap split qsplit">
+  <div class="qhead"><h2>Reserve your room.</h2><p class="lead">Early access to VOIZEX. The first guests in the queue get the first devices, and we will write when your room is ready.</p></div>
   <div class="desk">
     <form id="wl" novalidate>
       <div class="field"><label for="wlEmail">Email</label><input id="wlEmail" name="email" type="email" autocomplete="email" required></div>
@@ -816,14 +822,15 @@ function openRoom(no){load(no);$('#service').scrollIntoView({behavior:reduce?'au
 let cur_k='34',playing=false;const objEl=$('#obj'),storiesEl=$('#stories');
 storiesEl.innerHTML=Object.entries(ROOMS).map(([k,v])=>`<button class="chip hook" type="button" data-s="${k}" aria-pressed="${k==='34'}" aria-label="Room ${k}, ${v.name}"><i></i><b>${k}</b></button>`).join('');
 storiesEl.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){load(c.dataset.s);play()}});
-function load(k){cur_k=k;const R=ROOMS[k];$$('.chip',storiesEl).forEach(c=>{c.setAttribute('aria-pressed',String(c.dataset.s===k));});$('#demo').dataset.room=R.name;
+let fresh=true;
+function load(k){cur_k=k;fresh=true;playing=false;const R=ROOMS[k];$$('.chip',storiesEl).forEach(c=>{c.setAttribute('aria-pressed',String(c.dataset.s===k));});$('#demo').dataset.room=R.name;
 const mine=k===myRoom;let v=(k==='38'&&mine&&mood)?MOOD[mood]:R.voice;
 const lines=[...(mine&&ans.when?[PRE[ans.when]]:[]),...v,...(mine&&ans.fate?[POST[ans.fate]]:[])];
 $('#thoughts').innerHTML=lines.map(t=>`<p data-type>${esc(t)}</p>`).join('');
 $('#spage').innerHTML=R.writes.map((t,i)=>`<p class="${i===0?'slug':'action'}" data-type>${esc(t)}</p>`).join('');
-objEl.innerHTML=R.obj();
+objEl.innerHTML=R.obj();setTimeout(()=>{if(window.__vzVis&&window.__vzVis()&&fresh&&!playing)play()},60);
 $$('#demo [data-type]').forEach(el=>{el.dataset.full=el.textContent;el.classList.add('ty');el.innerHTML='<span class="t"></span><span class="g"></span>';el.querySelector('.g').textContent=el.dataset.full})}
-async function play(){const els=$$('#demo .ty');if(reduce){els.forEach(el=>{el.querySelector('.t').textContent=el.dataset.full;el.querySelector('.g').textContent=''});return}
+async function play(){fresh=false;const els=$$('#demo .ty');if(reduce){els.forEach(el=>{el.querySelector('.t').textContent=el.dataset.full;el.querySelector('.g').textContent=''});return}
 const run=Symbol();playing=run;$('.objp').classList.add('pending');
 els.forEach(el=>{el.querySelector('.t').textContent='';el.querySelector('.g').textContent=el.dataset.full});
 const th=$('#thoughts');th.classList.remove('done');waveOn=true;
@@ -833,7 +840,7 @@ for(let i=1;i<=s.length;i++){if(playing!==run)return;t.textContent=s.slice(0,i);
 if(playing===run){$('.objp').classList.remove('pending');playing=false}}
 let waveOn=false;const wp=$('#wavep');(function wave(){let d='M0 30';for(let x=0;x<=600;x+=12){const a=waveOn?(Math.random()*22+4)*Math.sin(x/9+performance.now()/90):0;d+=` L${x} ${(30+a).toFixed(1)}`}wp.setAttribute('d',d);requestAnimationFrame(wave)})();
 load('34');
-if(!reduce){const o=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){o.disconnect();if(!playing)play()}},{threshold:.35});o.observe($('#demo'))}
+{let vis=false;const o=new IntersectionObserver(es=>{vis=es.some(e=>e.isIntersecting);if(vis&&fresh&&!playing)play()},{threshold:.2});o.observe($('#demo'));window.__vzVis=()=>vis}
 
 /* reservation */
 const form=$('#wl'),err=$('#wlError'),sub=$('#wlSubmit'),done=$('#wlDone');
