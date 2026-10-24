@@ -17,3 +17,5 @@ services:
         sync: false
       - key: SECRET
         generateValue: true
+      - key: PUBLIC_URL
+        value: https://voizex.onrender.com
