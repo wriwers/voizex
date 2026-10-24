@@ -528,11 +528,22 @@ section{padding-block:56px}
 .farts .pcards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 .farts .pcard{padding:16px;min-height:118px}.farts .pcard span{font-size:15px}
 }
+
+.mbtn{display:none;background:none;border:0;font-family:var(--mono);font-size:18px;color:var(--hero-ink);cursor:pointer;padding:6px 0 6px 4px}
+.top.stuck .mbtn,body.mopen .mbtn{color:var(--ink)}
+.mnav{position:fixed;inset:0;z-index:4;background:var(--bg);display:flex;flex-direction:column;justify-content:center;gap:22px;padding:90px 24px 40px}
+.mnav[hidden]{display:none}
+.mnav a{font-family:var(--mono);font-size:36px;line-height:1.1;color:var(--ink);text-decoration:none}
+.mnav .btn{align-self:flex-start;font-family:var(--sans);font-size:16px;margin-top:18px;background:var(--ink);color:var(--bg)}
+body.mopen{overflow:hidden}body.mopen .top{position:fixed;background:var(--bg)}body.mopen .top .mark,body.mopen .theme{color:var(--ink);border-color:var(--ink)}
+@media(max-width:860px){.mbtn{display:inline-block}.hr{gap:14px}}
+@media(max-width:560px){.top .hr>.btn{display:none}}
 </style></head><body>
 
 <header class="top" id="top"><div class="wrap bar"><a class="mark" href="#lobby">VOIZEX</a>
 <nav><a href="#key">Check in</a><a href="#rooms">Rooms</a><a href="#service">Imagine</a><a href="#founder">Founder</a><a href="#investors">For investors</a></nav>
-<div class="hr"><button class="theme" id="themeBtn" type="button">Night</button><a class="btn" href="#queue">Reserve my room</a></div></div></header>
+<div class="hr"><button class="theme" id="themeBtn" type="button">Night</button><a class="btn" href="#queue">Reserve my room</a><button class="mbtn" id="mBtn" type="button" aria-expanded="false" aria-controls="mnav">Menu</button></div></div></header>
+<div class="mnav" id="mnav" hidden><a href="#key">Check in</a><a href="#rooms">Rooms</a><a href="#service">Imagine</a><a href="#founder">Founder</a><a href="#investors">For investors</a><a class="btn" href="#queue">Reserve my room</a></div>
 
 <main id="pg-main">
 <section class="hero-sec" id="lobby"><div class="wrap hero">
@@ -899,6 +910,9 @@ $('#gForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');
 })();
 
 document.querySelectorAll('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)document.querySelectorAll('.acc details').forEach(o=>{if(o!==d)o.open=false})}));
+
+{const mb=document.getElementById('mBtn'),mn=document.getElementById('mnav');const set=o=>{mn.hidden=!o;document.body.classList.toggle('mopen',o);mb.setAttribute('aria-expanded',String(o));mb.textContent=o?'Close':'Menu'};
+mb.addEventListener('click',()=>set(mn.hidden));mn.addEventListener('click',e=>{if(e.target.closest('a'))set(false)});addEventListener('keydown',e=>{if(e.key==='Escape')set(false)})}
 </script>
 <script type="text/plain" id="threeSrc">/**
  * @license
