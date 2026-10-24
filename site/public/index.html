@@ -306,6 +306,47 @@ nav{display:flex;gap:26px}nav a{text-decoration:none;color:var(--hero-ink);font-
 .an-blink2{animation:blink 6s infinite;transform-box:fill-box;transform-origin:center}
 .an-w1,.an-w2,.an-w3{animation:wf 5s ease-in-out infinite;opacity:0}.an-w2{animation-delay:1.6s}.an-w3{animation-delay:3.2s}@keyframes wf{0%,100%{opacity:0;transform:translateY(8px)}30%,60%{opacity:1;transform:none}}
 
+
+.kacts{justify-content:center;margin-top:18px!important}
+.floor{grid-auto-flow:dense}
+.door{cursor:pointer;transition:transform .25s,box-shadow .35s,background .35s}
+.door .inside{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:center;padding:38px 44px 22px 30px;opacity:0;pointer-events:none;transition:opacity .6s .35s}
+.door.open{grid-column:span 2;aspect-ratio:auto;border-radius:140px 140px 6px 6px;cursor:default;transform:none!important;background:var(--card)!important;color:var(--ink)!important}
+.door.open .leaf{transform:rotateY(-100deg);opacity:0;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .4s .5s}
+.door.open .glowin{opacity:0;transition:opacity .4s .6s}
+.door.open .inside{opacity:1;pointer-events:auto;position:relative}.door.open .in-scene{height:260px}
+.door.open::after{display:none}
+.in-scene .rscene{max-width:100%;max-height:100%;width:auto;height:100%}
+.in-scene{height:100%;display:flex;align-items:flex-end;justify-content:center;min-height:0}
+.in-t{text-align:left}.in-t .rv-no{font-size:clamp(40px,4vw,60px)}.in-t h3{font-size:clamp(24px,2.2vw,32px);margin-top:4px}
+.in-t p{color:var(--ink2);font-size:16px;margin:10px 0 18px}
+:root[data-theme="dark"] .door.open{background:#251C44!important}
+@media(max-width:860px){.door.open{aspect-ratio:auto}.door .inside{position:relative;grid-template-columns:1fr;padding:22px}.door.open .leaf,.door.open .glowin{position:absolute}.in-scene{height:240px}}
+
+
+/* notebook demo */
+.hooks{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;padding-top:12px;border-top:2px solid var(--ink2)}
+.hook{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:44px;height:64px;padding:18px 0 0;border:0!important;border-radius:20px 20px 6px 6px!important;background:var(--card)!important;color:var(--ink)!important;transform-origin:50% -12px;transition:transform .3s,background .3s}
+.hook::before{content:"";position:absolute;top:-14px;left:50%;width:2px;height:14px;background:var(--ink2)}
+.hook i{position:absolute;top:7px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--bg);transform:translateX(-50%)}
+.hook b{font-family:var(--mono);font-weight:400;font-size:19px}
+.hook:hover{transform:rotate(-6deg)}
+.hook[aria-pressed="true"]{background:var(--accent)!important;color:#fff!important;transform:rotate(4deg) translateY(4px)}
+.sheet{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(24px,4vw,56px);margin-top:clamp(32px,4vw,48px);background:var(--page);color:var(--page-ink);border-radius:3px;padding:clamp(28px,4vw,56px);background-image:repeating-linear-gradient(transparent 0 35px,rgba(16,35,59,.07) 35px 36px);box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.sheet::before{content:attr(data-room);position:absolute;top:18px;right:24px;font-family:var(--mono);font-size:18px;color:var(--accent)}
+.sheet .thoughts{gap:14px}
+.sheet .thoughts p{font-family:var(--mono);font-size:clamp(22px,2.2vw,30px);line-height:1.2;color:var(--page-ink);transition:opacity .6s,color .6s}
+.sheet .thoughts.done p{opacity:.38;text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:1.5px}
+.wave{width:100%;height:46px;margin:18px 0 10px;display:block}
+.wave path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.sheet .page{background:transparent!important;box-shadow:none!important;padding:0!important;font-size:16px;line-height:1.75}
+.sh-r{display:flex;align-items:center;justify-content:center}
+.sh-r .ob{transform:rotate(-3deg);box-shadow:0 22px 40px -18px rgba(0,0,0,.45)!important;max-width:320px;width:100%}
+.sh-r .book{transform:rotate(-3deg)}
+.objp.pending #obj{opacity:0;transform:translateY(16px)}#obj{transition:opacity .7s,transform .7s}
+:root[data-theme="dark"] .sheet{background-color:#E9E0D3;background-image:repeating-linear-gradient(transparent 0 35px,rgba(27,20,48,.08) 35px 36px)}
+@media(max-width:860px){.sheet{grid-template-columns:1fr}.sh-r{padding-top:12px}}
+
 /* founder */
 .founder figure img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 25%;border-radius:4px}
 .founder blockquote{font-family:var(--mono);font-size:clamp(26px,2.6vw,36px);line-height:1.15;margin-top:26px}
@@ -409,16 +450,18 @@ nav{display:flex;gap:26px}nav a{text-decoration:none;color:var(--hero-ink);font-
 <section id="rooms"><div class="wrap">
   <h2>Every thought<br>has a room.</h2>
   <div class="floor" id="floor"></div>
-  <div class="roomview" id="roomview" hidden><div id="rvScene"></div><div class="rv-t"><span class="rv-no" id="rvNo"></span><h3 id="rvName"></h3><p id="rvUse"></p><button class="btn" type="button" id="rvEnter">Enter the room</button></div></div>
 </div></section>
 
 <section class="alt" id="service"><div class="wrap">
   <h2>Just imagine.</h2>
-  <div class="pick stories" id="stories" role="group" aria-label="Choose a room"></div>
-  <div class="service" id="demo">
-    <article class="pane"><div class="thoughts" id="thoughts"></div></article>
-    <article class="pane"><div class="page" id="spage"></div></article>
-    <article class="pane objp"><div id="obj"></div></article>
+  <div class="hooks" id="stories" role="group" aria-label="Choose a room"></div>
+  <div class="sheet" id="demo">
+    <div class="sh-l">
+      <div class="thoughts" id="thoughts"></div>
+      <svg class="wave" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true"><path id="wavep" d="M0 30 H600"/></svg>
+      <div class="page" id="spage"></div>
+    </div>
+    <div class="sh-r objp"><div id="obj"></div></div>
   </div>
   <div class="replay"><button class="btn ghost" type="button" id="replay">Think it again</button></div>
 </div></section>
@@ -596,11 +639,11 @@ let myRoom=null,mood=null;
 function step(n){qs.forEach((k,i)=>k.classList.toggle('on',i<=n));const s=QUIZ[n];const q=typeof s.q==='string'?s.q:s.q[ans.want];const a=Array.isArray(s.a)?s.a:s.a[ans.want];
 qb.innerHTML=`<p class="q">${esc(q)}</p><div class="opts">${a.map(([v,t])=>`<button class="opt" type="button" data-k="${s.k}" data-v="${v}">${esc(t)}</button>`).join('')}</div>`;anim()}
 function result(){qs.forEach(k=>k.classList.add('on'));const [no,m]=ans.room.split(':');myRoom=no;mood=m||null;const R=ROOMS[no];
-qb.innerHTML=`<button class="keytag" type="button" id="qkey" aria-label="Open room ${no}"><span class="kh-ring"></span><span class="kn">${no}</span><span class="kname">${esc(R.name)}</span></button><p class="kline">This is your key. Tap it to open your door.</p><button class="linkish" type="button" id="qr">Start over</button>`;anim();
+qb.innerHTML=`<button class="keytag" type="button" id="qkey" aria-label="Open room ${no}"><span class="kh-ring"></span><span class="kn">${no}</span><span class="kname">${esc(R.name)}</span></button><p class="kline">This is your key.</p><div class="acts kacts"><button class="btn" type="button" id="qgo">Go to my room</button><button class="btn ghost" type="button" id="qr">Start over</button></div>`;anim();
 markFloor();$('#myRoom').textContent=`Your room: ${no}, ${R.name}`;load(no)}
 qb.addEventListener('click',e=>{const b=e.target.closest('.opt');if(b){ans[b.dataset.k]=b.dataset.v;const n=QUIZ.findIndex(s=>s.k===b.dataset.k);n<QUIZ.length-1?step(n+1):result();return}
 if(e.target.id==='qr'){for(const k in ans)delete ans[k];myRoom=null;mood=null;markFloor();step(0);return}
-if(e.target.closest('#qkey')){showRoom(myRoom);$('#rooms').scrollIntoView({behavior:reduce?'auto':'smooth'})}});
+if(e.target.closest('#qkey')||e.target.id==='qgo'){showRoom(myRoom);$('#rooms').scrollIntoView({behavior:reduce?'auto':'smooth'})}});
 
 /* floor */
 const floor=$('#floor');const ARCH=(inner,id)=>`<svg viewBox="0 0 300 360" class="rscene" aria-hidden="true"><defs><clipPath id="ac${id}"><path d="M20 360 V150 A130 130 0 0 1 280 150 V360 Z"/></clipPath><linearGradient id="sg${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky-top)"/><stop offset="1" style="stop-color:var(--horizon)"/></linearGradient></defs><g clip-path="url(#ac${id})"><rect width="300" height="360" fill="url(#sg${id})"/>${inner}</g><path d="M20 360 V150 A130 130 0 0 1 280 150 V360" fill="none" style="stroke:var(--frame)" stroke-width="14"/></svg>`;
@@ -619,19 +662,19 @@ const SCENES={
 };
 const USE={'34':'You woke up and went over the dream in words. Now it is a script.','35':'The scene you keep seeing becomes a film, block by block.','36':'The tune you hum inside becomes a song.','37':'The book you never started has its first page.','38':'Think warmer, and the room turns warm.','39':'You thought of the spa. The concierge already knows.','40':'Something Italian, by the water. Your table is booked.','41':'You thought of Paris. The ticket is already here.','42':'Say it to someone close, without a sound.','43':'Hear what you keep telling yourself.'};
 
-floor.innerHTML=Object.entries(ROOMS).map(([no,R])=>`<button class="door" type="button" data-no="${no}"><span class="glowin"></span><span class="leaf"><span class="dn">${no}</span><span class="dname">${esc(R.name)}</span></span></button>`).join('');
+floor.innerHTML=Object.entries(ROOMS).map(([no,R])=>`<div class="door" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><span class="glowin"></span><div class="inside"><div class="in-scene"></div><div class="in-t"><span class="rv-no">${no}</span><h3>${esc(R.name)}</h3><p>${USE[no]}</p><button class="btn" type="button" data-enter="${no}">Enter the room</button></div></div><span class="leaf"><span class="dn">${no}</span><span class="dname">${esc(R.name)}</span></span></div>`).join('');
 function markFloor(){$$('.door',floor).forEach(d=>d.classList.toggle('lit',d.dataset.no===myRoom))}
-let rvNo=null;function showRoom(no){rvNo=no;$$('.door',floor).forEach(d=>d.classList.toggle('open',d.dataset.no===no));const rv=$('#roomview');$('#rvScene').innerHTML=ARCH(SCENES[no],no);$('#rvNo').textContent=no;$('#rvName').textContent=ROOMS[no].name;$('#rvUse').textContent=USE[no];rv.hidden=false;rv.classList.remove('step-in');void rv.offsetWidth;rv.classList.add('step-in');
-const r=rv.getBoundingClientRect();if(r.top>innerHeight*.75||r.bottom>innerHeight)rv.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'})}
-floor.addEventListener('click',e=>{const d=e.target.closest('.door');if(d)showRoom(d.dataset.no)});
-$('#rvEnter').onclick=()=>openRoom(rvNo);
+function showRoom(no){$$('.door',floor).forEach(d=>{const on=d.dataset.no===no;d.classList.toggle('open',on);const sc=d.querySelector('.in-scene');if(on&&!sc.innerHTML)sc.innerHTML=ARCH(SCENES[d.dataset.no],d.dataset.no)});
+const d=floor.querySelector(`.door[data-no="${no}"]`);setTimeout(()=>{const r=d.getBoundingClientRect();if(r.top<70||r.bottom>innerHeight)d.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'})},420)}
+floor.addEventListener('click',e=>{const en=e.target.closest('[data-enter]');if(en){openRoom(en.dataset.enter);return}const d=e.target.closest('.door');if(d&&!d.classList.contains('open'))showRoom(d.dataset.no)});
+floor.addEventListener('keydown',e=>{const d=e.target.closest('.door');if(d&&(e.key==='Enter'||e.key===' ')&&e.target===d){e.preventDefault();showRoom(d.dataset.no)}});
 function openRoom(no){load(no);$('#service').scrollIntoView({behavior:reduce?'auto':'smooth'});setTimeout(play,reduce?0:650)}
 
 /* demo */
 let cur_k='34',playing=false;const objEl=$('#obj'),rb=$('#replay'),storiesEl=$('#stories');
-storiesEl.innerHTML=Object.entries(ROOMS).map(([k,v])=>`<button class="chip" type="button" data-s="${k}" aria-pressed="${k==='34'}">${k}</button>`).join('');
+storiesEl.innerHTML=Object.entries(ROOMS).map(([k,v])=>`<button class="chip hook" type="button" data-s="${k}" aria-pressed="${k==='34'}" aria-label="Room ${k}, ${v.name}"><i></i><b>${k}</b></button>`).join('');
 storiesEl.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){load(c.dataset.s);play()}});
-function load(k){cur_k=k;const R=ROOMS[k];$$('.chip',storiesEl).forEach(c=>{c.setAttribute('aria-pressed',String(c.dataset.s===k));c.textContent=c.dataset.s===k?`${k}, ${R.name}`:c.dataset.s});
+function load(k){cur_k=k;const R=ROOMS[k];$$('.chip',storiesEl).forEach(c=>{c.setAttribute('aria-pressed',String(c.dataset.s===k));});$('#demo').dataset.room=R.name;
 const mine=k===myRoom;let v=(k==='38'&&mine&&mood)?MOOD[mood]:R.voice;
 const lines=[...(mine&&ans.when?[PRE[ans.when]]:[]),...v,...(mine&&ans.fate?[POST[ans.fate]]:[])];
 $('#thoughts').innerHTML=lines.map(t=>`<p data-type>${esc(t)}</p>`).join('');
@@ -641,9 +684,12 @@ $$('#demo [data-type]').forEach(el=>{el.dataset.full=el.textContent;el.classList
 async function play(){const els=$$('#demo .ty');if(reduce){els.forEach(el=>{el.querySelector('.t').textContent=el.dataset.full;el.querySelector('.g').textContent=''});return}
 const run=Symbol();playing=run;$('.objp').classList.add('pending');
 els.forEach(el=>{el.querySelector('.t').textContent='';el.querySelector('.g').textContent=el.dataset.full});
-for(const el of els){const s=el.dataset.full,t=el.querySelector('.t'),g=el.querySelector('.g');
-for(let i=1;i<=s.length;i++){if(playing!==run)return;t.textContent=s.slice(0,i);g.textContent=s.slice(i);await sleep(22)}await sleep(180)}
+const th=$('#thoughts');th.classList.remove('done');waveOn=true;
+for(const el of els){if(!th.contains(el)&&waveOn){waveOn=false;th.classList.add('done');await sleep(500)}
+const s=el.dataset.full,t=el.querySelector('.t'),g=el.querySelector('.g');
+for(let i=1;i<=s.length;i++){if(playing!==run)return;t.textContent=s.slice(0,i);g.textContent=s.slice(i);await sleep(th.contains(el)?34:18)}await sleep(th.contains(el)?320:140)}
 if(playing===run){$('.objp').classList.remove('pending');playing=false}}
+let waveOn=false;const wp=$('#wavep');(function wave(){let d='M0 30';for(let x=0;x<=600;x+=12){const a=waveOn?(Math.random()*22+4)*Math.sin(x/9+performance.now()/90):0;d+=` L${x} ${(30+a).toFixed(1)}`}wp.setAttribute('d',d);requestAnimationFrame(wave)})();
 rb.onclick=()=>{load(cur_k);play()};load('34');
 if(!reduce){const o=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){o.disconnect();if(!playing)play()}},{threshold:.35});o.observe($('#demo'))}
 
