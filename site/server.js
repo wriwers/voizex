@@ -7,10 +7,10 @@ const PUB = path.join(__dirname, 'public'), DECK = process.env.DECK_PATH || (fs.
 const FREE = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com outlook.com hotmail.com live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net mail.com yandex.ru yandex.com ya.ru mail.ru inbox.ru list.ru bk.ru rambler.ru zoho.com tutanota.com tuta.io hey.com qq.com 163.com 126.com web.de t-online.de libero.it orange.fr free.fr laposte.net seznam.cz wp.pl o2.pl rediffmail.com fastmail.com hushmail.com duck.com mailinator.com guerrillamail.com 10minutemail.com tempmail.com temp-mail.org yopmail.com'.split(' '));
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-async function tg(html) {
+async function tg(html, kb) {
   const t = process.env.TELEGRAM_BOT_TOKEN, c = process.env.TELEGRAM_CHAT_ID;
   if (!t || !c) { console.log('[telegram off]', html); return; }
-  try { await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: html, parse_mode: 'HTML', disable_web_page_preview: true }) }); }
+  try { await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: html, parse_mode: 'HTML', disable_web_page_preview: true, ...(kb ? { reply_markup: { inline_keyboard: kb } } : {}) }) }); }
   catch (e) { console.error('telegram', e.message); }
 }
 async function mail(to, subject, text) {
@@ -32,6 +32,12 @@ function limited(key, max, windowMs) {
   const now = Date.now(), a = (hits.get(key) || []).filter(t => now - t < windowMs); a.push(now); hits.set(key, a); return a.length > max;
 }
 const fails = new Map();
+const STORE = path.join(require('os').tmpdir(), 'voizex-requests.json');
+let REQ = {}; try { REQ = JSON.parse(fs.readFileSync(STORE, 'utf8')); } catch {}
+const saveReq = () => { try { fs.writeFileSync(STORE, JSON.stringify(REQ)); } catch {} };
+async function tgApi(method, body) { const t = process.env.TELEGRAM_BOT_TOKEN; if (!t) return; try { await fetch(`https://api.telegram.org/bot${t}/${method}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); } catch (e) { console.error('tg', e.message); } }
+const HOOK = sign('hook').slice(0, 24);
+const BASE = () => process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || '';
 
 const host = u => { try { return new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u).hostname.toLowerCase().replace(/^www\./, ''); } catch { return ''; } };
 const base = h => h.split('.').slice(-2).join('.');
@@ -78,12 +84,26 @@ async function route(req, res) {
     if (Date.now() > p.exp) return json(res, 400, { error: 'The code expired. Request a new one.' });
     const f = (fails.get(pp) || 0); if (f >= 5) return json(res, 429, { error: 'Too many attempts. Request a new code.' });
     if (!safeEq(sign(pp + '|' + code), sig)) { fails.set(pp, f + 1); return json(res, 400, { error: 'That code is not right.' }); }
-    const t = { e: p.e, n: p.n, f: p.f, exp: Date.now() + 48 * 3600e3 };
-    const token = b64(t) + '.' + sign('deck|' + b64(t));
-    await tg(`<b>Investor verified</b> ✓\n${esc(p.n)}\n${esc(p.e)}\nFund: ${esc(p.f)}`);
-    const link = `https://${req.headers['x-forwarded-host'] || req.headers.host}/api/deck?t=${token}`;
-    mail(p.e, 'Your VOIZEX deck', `Hello ${p.n},\n\nHere is the VOIZEX deck. The link works for 48 hours:\n${link}\n\nAnn Fedotova\nFounder, VOIZEX\nTelegram: t.me/wriwers`).catch(e => console.error('deck mail', e.message));
-    return json(res, 200, { token });
+    const id = crypto.randomBytes(6).toString('hex');
+    REQ[id] = { e: p.e, n: p.n, f: p.f, r: p.r, at: Date.now(), status: 'pending' }; saveReq();
+    await tg(`<b>Deck request</b>\n${esc(p.n)}${p.r ? ', ' + esc(p.r) : ''}\n${esc(p.e)} (email confirmed)\nFund: <a href="https://${esc(p.f)}">${esc(p.f)}</a>\n\nSend the deck?`,
+      [[{ text: 'Yes, send', callback_data: 'ok:' + id }, { text: 'No', callback_data: 'no:' + id }]]);
+    return json(res, 200, { pending: true });
+  }
+  if (req.method === 'POST' && u.pathname === '/api/tg/' + HOOK) {
+    const b = await body(req, 100000); const q = b.callback_query; res.writeHead(200); res.end('ok');
+    if (!q || String(q.message && q.message.chat && q.message.chat.id) !== String(process.env.TELEGRAM_CHAT_ID)) return;
+    const [act, id] = String(q.data || '').split(':'); const r = REQ[id];
+    const done = (txt) => { tgApi('answerCallbackQuery', { callback_query_id: q.id, text: txt }); tgApi('editMessageReplyMarkup', { chat_id: q.message.chat.id, message_id: q.message.message_id, reply_markup: { inline_keyboard: [] } }); };
+    if (!r) return done('Request not found');
+    if (r.status !== 'pending') return done('Already ' + r.status);
+    if (act === 'no') { r.status = 'declined'; saveReq(); done('Declined'); return tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Declined: ${r.n}, ${r.f}` }); }
+    const t = { e: r.e, n: r.n, f: r.f, exp: Date.now() + 7 * 24 * 3600e3 };
+    const token = b64(t) + '.' + sign('deck|' + b64(t)); const link = `${BASE()}/api/deck?t=${token}`;
+    try { await mail(r.e, 'The VOIZEX deck', `Hello ${r.n},\n\nHere is the VOIZEX deck. The link works for 7 days:\n${link}\n\nAnn Fedotova\nFounder, VOIZEX`); r.status = 'sent'; saveReq(); done('Sent');
+      tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Deck sent to ${r.e}` }); }
+    catch (e) { done('Mail failed'); tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Could not email ${r.e}: ${e.message}` }); }
+    return;
   }
   if (req.method === 'GET' && u.pathname === '/api/deck') {
     const [tp, sig] = String(u.searchParams.get('t') || '').split('.'); const t = unb64(tp || '');
@@ -102,4 +122,5 @@ async function route(req, res) {
   }
   res.writeHead(405); res.end();
 }
-http.createServer((req, res) => route(req, res).catch(e => { console.error(e); if (!res.headersSent) json(res, 500, { error: 'Something went wrong. Try again.' }); })).listen(PORT, () => console.log('VOIZEX on', PORT));
+http.createServer((req, res) => route(req, res).catch(e => { console.error(e); if (!res.headersSent) json(res, 500, { error: 'Something went wrong. Try again.' }); })).listen(PORT, () => { console.log('VOIZEX on', PORT);
+  if (process.env.TELEGRAM_BOT_TOKEN && BASE()) tgApi('setWebhook', { url: `${BASE()}/api/tg/${HOOK}`, allowed_updates: ['callback_query'] }).then(() => console.log('telegram webhook set')); });

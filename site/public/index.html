@@ -605,8 +605,8 @@ nav{display:flex;gap:26px}nav a{text-decoration:none;color:var(--hero-ink);font-
             <button class="btn" type="submit" id="gSend">Send me the code</button></form></div>
         <div id="g2" hidden><h3>Check your inbox</h3><p id="g2t"></p>
           <form id="cForm" novalidate><div class="gf"><label for="gCode">Code</label><input id="gCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000"></div>
-          <button class="btn" type="submit" id="gVerify">Open the deck</button></form><button class="linkish" type="button" id="gBack">Use another email</button></div>
-        <div id="g3" hidden><h3>Welcome.</h3><p>The full deck is open for you for 48 hours.</p><a class="btn" id="gOpen" target="_blank" rel="noopener" href="#">Open the full deck</a></div>
+          <button class="btn" type="submit" id="gVerify">Confirm</button></form><button class="linkish" type="button" id="gBack">Use another email</button></div>
+        <div id="g3" hidden><h3>Thank you.</h3><p>Your email is confirmed. Ann will send the full deck to your inbox shortly.</p></div>
         <p class="err" id="gErr" hidden></p>
       </div>
     </div></details>
@@ -772,7 +772,7 @@ const API=/^https?:$/.test(location.protocol)?'':null;
 const gErr=$('#gErr'),show=n=>['g1','g2','g3'].forEach((g,i)=>$('#'+g).hidden=i!==n);
 const gerr=t=>{gErr.textContent=t;gErr.hidden=!t};
 let gEmail='',gChal='';
-try{const t=JSON.parse(localStorage.getItem('vz-deck')||'null');if(t&&t.exp>Date.now()){$('#gOpen').href='/api/deck?t='+encodeURIComponent(t.t);show(2)}}catch(e){}
+
 async function post(u,d){const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||'Something went wrong. Try again.');return j}
 $('#gForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');
  if(API===null){gerr('This works on the live site.');return}
@@ -784,8 +784,7 @@ $('#gForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');
 $('#cForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');const code=$('#gCode').value.replace(/\D/g,'');
  if(code.length!==6){gerr('The code has 6 digits.');return}
  const b=$('#gVerify');b.disabled=true;
- try{const j=await post('/api/investor/verify',{email:gEmail,code,challenge:gChal});try{localStorage.setItem('vz-deck',JSON.stringify({t:j.token,exp:Date.now()+47*3600e3}))}catch(e){}
-  $('#gOpen').href='/api/deck?t='+encodeURIComponent(j.token);show(2)}catch(x){gerr(x.message)}
+ try{await post('/api/investor/verify',{email:gEmail,code,challenge:gChal});show(2)}catch(x){gerr(x.message)}
  b.disabled=false});
 $('#gBack').onclick=()=>{gerr('');show(0)};
 })();
