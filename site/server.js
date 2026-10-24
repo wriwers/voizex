@@ -58,6 +58,24 @@ async function route(req, res) {
     await tg(`<b>New guest</b>\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
     return json(res, 200, { ok: true });
   }
+  if (req.method === 'POST' && u.pathname === '/api/investor/request') {
+    if (limited('r' + ip, 5, 3600e3)) return json(res, 429, { error: 'Too many requests. Try again in an hour.' });
+    const b = await body(req);
+    const name = String(b.name || '').trim().slice(0, 120), email = String(b.email || '').trim().toLowerCase().slice(0, 200), fund = String(b.fund || '').trim().slice(0, 200), role = String(b.role || '').trim().slice(0, 120);
+    const wa = String(b.whatsapp || '').replace(/\D/g, '').slice(0, 15), dream = String(b.dream || '').trim().slice(0, 600);
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check your name and email.' });
+    if (wa.length < 8) return json(res, 400, { error: 'Check the WhatsApp number, with the country code.' });
+    const ed = email.split('@')[1], fh = host(fund);
+    if (FREE.has(ed)) return json(res, 400, { error: 'Use your work email at the fund, not a personal one.' });
+    if (!fh || base(ed) !== base(fh)) return json(res, 400, { error: `Your email domain (${ed}) has to match the fund website.` });
+    const id = crypto.randomBytes(6).toString('hex');
+    REQ[id] = { e: email, n: name, f: fh, r: role, wa, d: dream, at: Date.now(), status: 'pending' }; saveReq();
+    const t = { e: email, n: name, f: fh, id, exp: Date.now() + 7 * 24 * 3600e3 };
+    const token = b64(t) + '.' + sign('deck|' + b64(t));
+    await tg(`<b>Investor opened the deck</b>\n${esc(name)}${role ? ', ' + esc(role) : ''}\nFund: <a href="https://${esc(fh)}">${esc(fh)}</a>\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}${dream ? '\n\nTheir dream: ' + esc(dream) : ''}\n\nSend the deck to their email too?`,
+      [[{ text: 'Yes, send', callback_data: 'ok:' + id }, { text: 'No', callback_data: 'no:' + id }], [{ text: 'Open WhatsApp chat', url: 'https://wa.me/' + wa }]]);
+    return json(res, 200, { token });
+  }
   if (req.method === 'POST' && u.pathname === '/api/investor/start') {
     if (limited('s' + ip, 5, 3600e3)) return json(res, 429, { error: 'Too many requests. Try again in an hour.' });
     const b = await body(req);
@@ -113,7 +131,7 @@ async function route(req, res) {
   if (req.method === 'GET' && u.pathname === '/api/deck') {
     const [tp, sig] = String(u.searchParams.get('t') || '').split('.'); const t = unb64(tp || '');
     if (!t || !sig || !safeEq(sign('deck|' + tp), sig) || Date.now() > t.exp) { res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('This link has expired. Verify again on the VOIZEX site.'); }
-    if (!limited('d' + tp, 1, 30 * 60e3)) await tg(`<b>Deck opened</b>\n${esc(t.n)}, ${esc(t.f)}`);
+    if (!limited('d' + tp, 1, 30 * 60e3) && !(t.id && REQ[t.id] && Date.now() - REQ[t.id].at < 120e3)) await tg(`<b>Deck opened again</b>\n${esc(t.n)}, ${esc(t.f)}`);
     res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="VOIZEX-deck.pdf"', 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' });
     return fs.createReadStream(DECK).pipe(res);
   }
