@@ -764,7 +764,7 @@ section{padding-block:44px}.fband{padding-block:44px!important}
         <div id="g1" class="gsplit"><h2 class="gh">The full deck.</h2>
           <form id="gForm" novalidate><div class="g2">
             <div class="gf"><label for="gName">Name</label><input id="gName" autocomplete="name" required></div>
-            <div class="gf"><label for="gEmail">Work email</label><input id="gEmail" type="email" autocomplete="email" required></div>
+            <div class="gf"><label for="gEmail">Email</label><input id="gEmail" type="email" autocomplete="email" required></div>
             <div class="gf"><label for="gWa">WhatsApp</label><input id="gWa" type="tel" autocomplete="tel" inputmode="tel" required></div>
             <div class="gf"><label for="gFund">Fund website</label><input id="gFund" required></div>
             <div class="gf"><label for="gRole">Role</label><input id="gRole"></div></div>
@@ -938,7 +938,7 @@ async function post(u,d){let r;try{r=await fetch(u,{method:'POST',headers:{'Cont
 $('#gForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');
  if(API===null){gerr('This works on the live site.');return}
  const d={name:$('#gName').value.trim(),email:$('#gEmail').value.trim(),whatsapp:$('#gWa').value.trim(),fund:$('#gFund').value.trim(),role:$('#gRole').value.trim()};
- if(!d.name||!d.email||!d.fund||!d.whatsapp){gerr('Fill in your name, work email, WhatsApp and fund website.');return}
+ if(!d.name||!d.email||!d.fund||!d.whatsapp){gerr('Fill in your name, email, WhatsApp and fund website.');return}
  if(d.whatsapp.replace(/\D/g,'').length<8){gerr('Check the WhatsApp number, with the country code.');return}
  const b=$('#gSend');const win=window.open('about:blank','_blank');b.disabled=true;b.textContent='Opening…';
  try{const j=await post('/api/investor/request',d);const url='/api/deck?t='+encodeURIComponent(j.token);$('#gOpen').href=url;if(win)win.location=url;show(1)}

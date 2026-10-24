@@ -99,8 +99,7 @@ async function route(req, res) {
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check your name and email.' });
     if (wa.length < 8) return json(res, 400, { error: 'Check the WhatsApp number, with the country code.' });
     const ed = email.split('@')[1], fh = host(fund);
-    if (FREE.has(ed)) return json(res, 400, { error: 'Use your work email at the fund, not a personal one.' });
-    if (!fh || base(ed) !== base(fh)) return json(res, 400, { error: `Your email domain (${ed}) has to match the fund website.` });
+    if (!fh) return json(res, 400, { error: 'Add the fund website.' });
     const r = { e: email, n: name, f: fh, r: role, wa, at: Date.now() };
     const sealed = seal('req', r), mark = sealed.slice(-16);
     await tg(`<b>Investor opened the deck</b>\n${esc(name)}${role ? ', ' + esc(role) : ''}\nFund: <a href="https://${esc(fh)}/#vz=${sealed}">${esc(fh)}</a>\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}`,
