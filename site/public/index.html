@@ -758,11 +758,11 @@ form.addEventListener('submit',async e=>{e.preventDefault();err.hidden=true;cons
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){err.textContent='Check the email address, like you@studio.com.';err.hidden=false;$('#wlEmail').focus();return}
 const create=myRoom||cur_k;const entry={email,room:create+', '+ROOMS[create].name,dream:$('#wlDream').value.trim().slice(0,280),quiz:{...ans},theme:cur(),page:location.href};
 sub.disabled=true;sub.textContent='Reserving…';let ok=false;
-if(/^https?:$/.test(location.protocol)){try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});ok=r.ok}catch(x){}}
+if(/^https?:$/.test(location.protocol)){try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});ok=r.ok&&/json/.test(r.headers.get('content-type')||'')}catch(x){}}
 const r=[create,ROOMS[create].name];
 if(ok){$('#doneText').textContent=`Room ${r[0]}, ${r[1]}, is reserved for you. We will write to ${email} when your room is ready.`;form.hidden=true;done.hidden=false}
 else{const m='mailto:'+CONTACT+'?subject='+encodeURIComponent('VOIZEX early access')+'&body='+encodeURIComponent('Please add me to the VOIZEX queue.\n\nEmail: '+email+'\nRoom: '+r[0]+', '+r[1]+(entry.dream?'\nNote: '+entry.dream:''));
-err.innerHTML=`The desk did not answer. <a href="${m}">Send the request by email</a> or write on Telegram <a href="https://t.me/wriwers" target="_blank" rel="noopener">@wriwers</a>.`;err.hidden=false}
+const wt='https://wa.me/971585259461?text='+encodeURIComponent('Hello Ann, please add me to the VOIZEX queue.\n\nEmail: '+email+'\nRoom: '+r[0]+', '+r[1]+(entry.dream?'\nNote: '+entry.dream:''));window.open(wt,'_blank');$('#doneText').innerHTML=`Your request opened in WhatsApp. Send it and room ${r[0]} is yours. Or <a href="${m}">send it by email</a>.`;form.hidden=true;done.hidden=false}
 sub.disabled=false;sub.textContent='Reserve my room'});
 $('#wlAgain').onclick=()=>{form.reset();done.hidden=true;form.hidden=false;$('#wlEmail').focus()};
 
@@ -771,14 +771,16 @@ $('#wlAgain').onclick=()=>{form.reset();done.hidden=true;form.hidden=false;$('#w
 const API=/^https?:$/.test(location.protocol)?'':null;
 const gErr=$('#gErr'),show=n=>['g1','g3'].forEach((g,i)=>$('#'+g).hidden=i!==n);
 const gerr=t=>{gErr.textContent=t;gErr.hidden=!t};
-async function post(u,d){const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||'Something went wrong. Try again.');return j}
+async function post(u,d){let r;try{r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})}catch(e){const x=new Error('offline');x.offline=true;throw x}let j=null;try{j=await r.json()}catch(e){}if(!j){const x=new Error('offline');x.offline=true;throw x}if(!r.ok)throw new Error(j.error||'Something went wrong. Try again.');return j}
 $('#gForm').addEventListener('submit',async e=>{e.preventDefault();gerr('');
  if(API===null){gerr('This works on the live site.');return}
  const d={name:$('#gName').value.trim(),email:$('#gEmail').value.trim(),whatsapp:$('#gWa').value.trim(),fund:$('#gFund').value.trim(),role:$('#gRole').value.trim(),dream:$('#gDream').value.trim()};
  if(!d.name||!d.email||!d.fund||!d.whatsapp){gerr('Fill in your name, work email, WhatsApp and fund website.');return}
  if(d.whatsapp.replace(/\D/g,'').length<8){gerr('Check the WhatsApp number, with the country code.');return}
  const b=$('#gSend');const win=window.open('about:blank','_blank');b.disabled=true;b.textContent='Opening…';
- try{const j=await post('/api/investor/request',d);const url='/api/deck?t='+encodeURIComponent(j.token);$('#gOpen').href=url;if(win)win.location=url;show(1)}catch(x){if(win)win.close();gerr(x.message)}
+ try{const j=await post('/api/investor/request',d);const url='/api/deck?t='+encodeURIComponent(j.token);$('#gOpen').href=url;if(win)win.location=url;show(1)}
+ catch(x){if(x.offline){const t=`Hello Ann, I would like the VOIZEX deck.\n\nName: ${d.name}\nRole: ${d.role||'-'}\nFund: ${d.fund}\nEmail: ${d.email}\nWhatsApp: ${d.whatsapp}${d.dream?'\n\nMy dream: '+d.dream:''}`;const wa='https://wa.me/971585259461?text='+encodeURIComponent(t);if(win)win.location=wa;else location.href=wa;
+  $('#g3').innerHTML='<h3>Thank you.</h3><p>Your request opened in WhatsApp. Send it, and Ann will share the deck with you.</p>';show(1)}else{if(win)win.close();gerr(x.message)}}
  b.disabled=false;b.textContent='Open the deck'});
 })();
 </script>
