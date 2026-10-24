@@ -15,5 +15,11 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      - key: WA_TOKEN
+        sync: false
+      - key: WA_PHONE_ID
+        sync: false
+      - key: WA_TEMPLATE
+        sync: false
       - key: SECRET
         generateValue: true

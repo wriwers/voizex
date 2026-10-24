@@ -13,13 +13,22 @@ async function tg(html, kb) {
   try { await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: html, parse_mode: 'HTML', disable_web_page_preview: true, ...(kb ? { reply_markup: { inline_keyboard: kb } } : {}) }) }); }
   catch (e) { console.error('telegram', e.message); }
 }
-async function mail(to, subject, text) {
+async function mail(to, subject, text, attach) {
   const k = process.env.BREVO_API_KEY, from = process.env.MAIL_FROM;
   if (process.env.DEV_MAIL) { console.log('DEV CODE MAIL', to, subject); return; }
   if (!k || !from) throw new Error('mail not configured');
   const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': k, 'Content-Type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ sender: { name: 'VOIZEX', email: from }, to: [{ email: to }], subject, textContent: text }) });
+    body: JSON.stringify({ sender: { name: 'Ann Fedotova, VOIZEX', email: from }, replyTo: { email: from }, to: [{ email: to }], subject, textContent: text, ...(attach ? { attachment: [attach] } : {}) }) });
   if (!r.ok) throw new Error('mail ' + r.status + ' ' + (await r.text()).slice(0, 200));
+}
+async function waSend(to, name, link) {
+  const tok = process.env.WA_TOKEN, pid = process.env.WA_PHONE_ID, tpl = process.env.WA_TEMPLATE;
+  if (!tok || !pid || !tpl) return false;
+  const r = await fetch(`https://graph.facebook.com/v20.0/${pid}/messages`, { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'template', template: { name: tpl, language: { code: process.env.WA_LANG || 'en' },
+      components: [{ type: 'header', parameters: [{ type: 'document', document: { link, filename: 'VOIZEX-deck.pdf' } }] }, { type: 'body', parameters: [{ type: 'text', text: name }] }] } }) });
+  if (!r.ok) throw new Error('WhatsApp ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  return true;
 }
 const sign = s => crypto.createHmac('sha256', SECRET).update(s).digest('base64url');
 const b64 = o => Buffer.from(JSON.stringify(o)).toString('base64url');
@@ -56,6 +65,23 @@ async function route(req, res) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check the email address.' });
     const q = b.quiz || {};
     await tg(`<b>New guest</b>\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
+    return json(res, 200, { ok: true });
+  }
+  if (req.method === 'POST' && u.pathname === '/api/investor/request') {
+    if (limited('r' + ip, 5, 3600e3)) return json(res, 429, { error: 'Too many requests. Try again in an hour.' });
+    const b = await body(req);
+    const name = String(b.name || '').trim().slice(0, 120), email = String(b.email || '').trim().toLowerCase().slice(0, 200), fund = String(b.fund || '').trim().slice(0, 200), role = String(b.role || '').trim().slice(0, 120);
+    const wa = String(b.whatsapp || '').replace(/[^\d+]/g, '').replace(/^00/, '+').slice(0, 20), dream = String(b.dream || '').trim().slice(0, 600);
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check your name and email.' });
+    if (wa.replace(/\D/g, '').length < 8) return json(res, 400, { error: 'Check the WhatsApp number, with the country code.' });
+    const ed = email.split('@')[1], fh = host(fund);
+    if (FREE.has(ed)) return json(res, 400, { error: 'Use your work email at the fund, not a personal one.' });
+    if (!fh || base(ed) !== base(fh)) return json(res, 400, { error: `Your email domain (${ed}) has to match the fund website.` });
+    if (!process.env.DEV_MAIL) { try { await dns.resolveMx(ed); } catch { return json(res, 400, { error: `We could not find a mail server for ${ed}.` }); } }
+    const id = crypto.randomBytes(6).toString('hex'), waDigits = wa.replace(/\D/g, '');
+    REQ[id] = { e: email, n: name, f: fh, r: role, wa: waDigits, d: dream, at: Date.now(), status: 'pending' }; saveReq();
+    await tg(`<b>Investor wants the deck</b>\n${esc(name)}${role ? ', ' + esc(role) : ''}\nFund: <a href="https://${esc(fh)}">${esc(fh)}</a>\nEmail: ${esc(email)}\nWhatsApp: +${esc(waDigits)}${dream ? '\n\nTheir dream: ' + esc(dream) : ''}\n\nSend the deck?`,
+      [[{ text: 'Confirm', callback_data: 'ok:' + id }, { text: 'Decline', callback_data: 'no:' + id }], [{ text: 'Open WhatsApp chat', url: 'https://wa.me/' + waDigits }]]);
     return json(res, 200, { ok: true });
   }
   if (req.method === 'POST' && u.pathname === '/api/investor/start') {
@@ -100,9 +126,14 @@ async function route(req, res) {
     if (act === 'no') { r.status = 'declined'; saveReq(); done('Declined'); return tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Declined: ${r.n}, ${r.f}` }); }
     const t = { e: r.e, n: r.n, f: r.f, exp: Date.now() + 7 * 24 * 3600e3 };
     const token = b64(t) + '.' + sign('deck|' + b64(t)); const link = `${BASE()}/api/deck?t=${token}`;
-    try { await mail(r.e, 'The VOIZEX deck', `Hello ${r.n},\n\nHere is the VOIZEX deck. The link works for 7 days:\n${link}\n\nAnn Fedotova\nFounder, VOIZEX`); r.status = 'sent'; saveReq(); done('Sent');
-      tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Deck sent to ${r.e}` }); }
-    catch (e) { done('Mail failed'); tgApi('sendMessage', { chat_id: q.message.chat.id, text: `Could not email ${r.e}: ${e.message}` }); }
+    const report = [];
+    try { const pdf = fs.readFileSync(DECK).toString('base64');
+      await mail(r.e, 'VOIZEX pitch deck for you', `Good afternoon, ${r.n},\n\nThis is Ann Fedotova, founder of VOIZEX. The pitch deck for you is attached.\nYou can also open it here for 7 days:\n${link}\n\nAnn Fedotova\nFounder, VOIZEX\nWhatsApp: +971585259461`, { name: 'VOIZEX-pitch-deck.pdf', content: pdf });
+      report.push('email sent to ' + r.e); }
+    catch (e) { report.push('email failed: ' + e.message); }
+    if (r.wa) { try { const okWa = await waSend(r.wa, r.n, link); report.push(okWa ? 'WhatsApp sent to +' + r.wa : 'WhatsApp not connected, use the chat button'); } catch (e) { report.push('WhatsApp failed: ' + e.message); } }
+    r.status = 'sent'; saveReq(); done('Done');
+    tgApi('sendMessage', { chat_id: q.message.chat.id, text: `${r.n}, ${r.f}:\n` + report.join('\n'), reply_markup: r.wa ? { inline_keyboard: [[{ text: 'Send the link on WhatsApp', url: 'https://wa.me/' + r.wa + '?text=' + encodeURIComponent(`Good afternoon, ${r.n}. This is Ann Fedotova, founder of VOIZEX. The pitch deck for you: ${link}`) }]] } : undefined });
     return;
   }
   if (req.method === 'GET' && u.pathname === '/api/deck') {
