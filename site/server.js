@@ -88,7 +88,8 @@ async function route(req, res) {
     const b = await body(req); const email = String(b.email || '').trim().slice(0, 200);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check the email address.' });
     const q = b.quiz || {};
-    await tg(`<b>New guest</b>\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
+    const gname = String(b.name || '').trim().slice(0, 120), gco = String(b.company || '').trim().slice(0, 160);
+    await tg(`<b>New guest</b>\n${esc(gname)}${gco ? ', ' + esc(gco) : ''}\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
     return json(res, 200, { ok: true });
   }
   if (req.method === 'POST' && u.pathname === '/api/investor/request') {
