@@ -81,6 +81,8 @@ async function route(req, res) {
     const t = { e: p.e, n: p.n, f: p.f, exp: Date.now() + 48 * 3600e3 };
     const token = b64(t) + '.' + sign('deck|' + b64(t));
     await tg(`<b>Investor verified</b> ✓\n${esc(p.n)}\n${esc(p.e)}\nFund: ${esc(p.f)}`);
+    const link = `https://${req.headers['x-forwarded-host'] || req.headers.host}/api/deck?t=${token}`;
+    mail(p.e, 'Your VOIZEX deck', `Hello ${p.n},\n\nHere is the VOIZEX deck. The link works for 48 hours:\n${link}\n\nAnn Fedotova\nFounder, VOIZEX\nTelegram: t.me/wriwers`).catch(e => console.error('deck mail', e.message));
     return json(res, 200, { token });
   }
   if (req.method === 'GET' && u.pathname === '/api/deck') {
