@@ -5,9 +5,12 @@
 const http = require('http'), fs = require('fs'), path = require('path'), crypto = require('crypto');
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.SECRET || crypto.randomBytes(32).toString('hex');
-const PUB = path.join(__dirname, 'public'), DECK = process.env.DECK_PATH || (fs.existsSync('/etc/secrets/deck.pdf') ? '/etc/secrets/deck.pdf' : path.join(__dirname, 'private', 'deck.pdf'));
+const PUB = path.join(__dirname, 'public'), DECK = process.env.DECK_PATH || (fs.existsSync('/etc/secrets') ? '/etc/secrets/deck.pdf' : path.join(__dirname, 'private', 'deck.pdf'));
 // Render Secret Files hold text, so the deck may be stored there as base64; it is decoded once at start.
-const deckPdf = () => { const b = fs.readFileSync(DECK); return b.subarray(0, 4).toString() === '%PDF' ? b : Buffer.from(b.toString().replace(/\s+/g, ''), 'base64'); };
+const deckFile = () => { if (fs.existsSync(DECK)) return fs.readFileSync(DECK);
+  const dir = path.dirname(DECK), parts = fs.readdirSync(dir).filter(f => f.startsWith('deck.part.')).sort();
+  return Buffer.concat(parts.map(f => fs.readFileSync(path.join(dir, f)))); };
+const deckPdf = () => { const b = deckFile(); return b.subarray(0, 4).toString() === '%PDF' ? b : Buffer.from(b.toString().replace(/\s+/g, ''), 'base64'); };
 let DECK_BUF = null; const deck = () => DECK_BUF || (DECK_BUF = deckPdf());
 const FREE = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com outlook.com hotmail.com live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net mail.com yandex.ru yandex.com ya.ru mail.ru inbox.ru list.ru bk.ru rambler.ru zoho.com tutanota.com tuta.io hey.com qq.com 163.com 126.com web.de t-online.de libero.it orange.fr free.fr laposte.net seznam.cz wp.pl o2.pl rediffmail.com fastmail.com hushmail.com duck.com mailinator.com guerrillamail.com 10minutemail.com tempmail.com temp-mail.org yopmail.com'.split(' '));
 const WEEK = 7 * 24 * 3600e3;
