@@ -62,7 +62,7 @@ function json(res, code, obj) { res.writeHead(code, { 'Content-Type': 'applicati
 const ipOf = req => (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress;
 
 // One card per form, no buttons. The mark tells at a glance who wrote.
-const KINDS = { investor: '🔴 Инвестор', partner: '🟡 Партнёр', client: '🟢 Клиент' };
+const KINDS = { investor: '🔴 Investor', partner: '🟡 Partner', client: '🟢 Client' };
 const FIELDS = [['name', 'Имя'], ['email', 'Email'], ['whatsapp', 'WhatsApp'], ['field', 'Сфера'], ['role', 'Роль'], ['website', 'Сайт'], ['room', 'Комната']];
 
 async function route(req, res) {
@@ -94,7 +94,7 @@ async function route(req, res) {
     const ed = email.split('@')[1], fh = host(fund);
     if (!fh) return json(res, 400, { error: 'Add the fund website.' });
     const r = { e: email, n: name, f: fh, r: role, wa, at: Date.now() };
-    await tg(`<b>${KINDS.investor}</b>, открыл деку\nИмя: ${esc(name)}${role ? '\nРоль: ' + esc(role) : ''}\nФонд: ${esc(fh)}\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}`);
+    await tg(`<b>${KINDS.investor}</b>, opened the deck\nИмя: ${esc(name)}${role ? '\nРоль: ' + esc(role) : ''}\nФонд: ${esc(fh)}\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}`);
     return json(res, 200, { token: deckToken(r) });
   }
   if (req.method === 'GET' && u.pathname === '/api/deck') {
