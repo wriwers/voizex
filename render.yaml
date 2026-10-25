@@ -18,4 +18,4 @@ services:
       - key: SECRET
         generateValue: true
       - key: PUBLIC_URL
-        value: https://voizex.onrender.com
+        value: https://voizex-co.onrender.com
