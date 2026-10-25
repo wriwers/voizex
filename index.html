@@ -1,6 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VOIZEX — Think it. It happens.</title>
 <meta name="description" content="VOIZEX reads your inner voice and turns the films in your head into something you can show.">
+<script>
+window.vzFail='Something went wrong. Write to us on <a href="https://wa.me/971585259461" target="_blank" rel="noopener">WhatsApp</a>.';
+window.vzLead=async function(d){if(!/^https?:$/.test(location.protocol))return true;
+ try{const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.ok}catch(e){return false}};
+</script>
 <script>(function(){var t=null;try{t=localStorage.getItem('vz-theme')}catch(e){}if(t!=='dark'&&t!=='light')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.dataset.theme=t})();</script>
 <style>
 .inv-hero{padding-block:clamp(64px,8vw,110px)}.inv-hero .lead{font-size:17px;line-height:1.7}.cite h3 a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
@@ -675,6 +680,19 @@ h1,h2,h3{letter-spacing:0;line-height:1.1}
  #key .vitrine{aspect-ratio:auto!important;height:clamp(300px,calc(100svh - 290px),560px)!important}
  #key .kh{margin-bottom:0}
 }
+
+.foot .pacc{margin:clamp(24px,3vw,36px) 0 clamp(36px,5vw,56px)}
+.foot .pacc summary{font-size:clamp(22px,2.2vw,30px)!important}
+.foot .pab{align-items:start}
+.foot .pdesc{color:var(--dark-ink2);max-width:22em;font-size:16px;line-height:1.6}
+.foot .gf label{color:var(--dark-ink2)!important}
+.foot .gf input{color:var(--dark-ink)!important;border-bottom-color:color-mix(in srgb,var(--dark-ink) 30%,transparent)!important}
+.foot .go{color:var(--dark-ink)}
+.foot .gate.solo{margin:0;padding:0;background:none;max-width:none}
+.foot .err{color:#F0937A;margin-top:12px}
+.foot .pdone,.foot #g3 p{color:var(--dark-ink2);margin-top:8px}
+.foot #g3 h3{color:var(--dark-ink)}
+.foot .pth{display:block;font-family:var(--mono);font-weight:400;font-size:28px;color:var(--dark-ink);margin-bottom:6px}.foot .pdone{font-size:17px}.foot .err a{color:inherit}
 </style></head><body>
 
 <header class="top" id="top"><div class="wrap bar"><a class="mark" href="#lobby">VOIZEX</a>
@@ -780,13 +798,14 @@ h1,h2,h3{letter-spacing:0;line-height:1.1}
   <div class="qhead"><h2>Reserve your room.</h2><p class="roomline" id="myRoom" hidden></p></div>
   <div class="desk">
     <form id="wl" novalidate>
-      <div class="field"><label for="wlName">Name</label><input id="wlName" name="name" autocomplete="name" required></div>
+      <div class="field"><label for="wlName">Full name</label><input id="wlName" name="name" autocomplete="name" required></div>
       <div class="field"><label for="wlEmail">Email</label><input id="wlEmail" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="wlCo">Company or field</label><input id="wlCo" name="company" autocomplete="organization"></div>
+      <div class="field"><label for="wlCo">Field</label><input id="wlCo" name="company" autocomplete="organization-title"></div>
+      <div class="field"><label for="wlWeb">Website</label><input id="wlWeb" name="website" type="url" inputmode="url" autocomplete="url"></div>
       <button class="go" type="submit" id="wlSubmit">Reserve my room →</button>
       <p class="err" id="wlError" hidden></p>
     </form>
-    <div class="done" id="wlDone" hidden><h3>You are in the queue.</h3><p id="doneText"></p><button class="linkish" type="button" id="wlAgain">Reserve for someone else</button></div>
+    <div class="done" id="wlDone" hidden><h3>Thank you.</h3><p id="doneText">We will be in touch.</p></div>
   </div>
 </div></section>
 
@@ -796,7 +815,23 @@ h1,h2,h3{letter-spacing:0;line-height:1.1}
 
 <footer class="foot"><div class="wrap">
   <h2>Ring the bell.</h2>
-  <div class="row"><div class="fcols"><div><p class="fh2">Write to me</p><p><a id="waLink" href="#" target="_blank" rel="noopener" hidden>WhatsApp</a><a href="mailto:wriwers@outlook.com">Email</a><a href="https://linkedin.com/in/wriwers" target="_blank" rel="noopener">LinkedIn</a></p></div></div><a class="btn" href="#queue" style="background:var(--dark-ink);color:var(--dark-bg)">Reserve my room</a></div>
+  <div class="acc pacc">
+    <details><summary>Partnership</summary><div class="acc-b split pab">
+      <p class="pdesc">VOIZEX is open to collaborations.</p>
+      <div><form id="pForm" class="xform" data-kind="partner" novalidate><div class="g2">
+        <div class="gf"><label for="pName">Full name</label><input id="pName" autocomplete=name required></div><div class="gf"><label for="pEmail">Email</label><input id="pEmail" type=email autocomplete=email required></div><div class="gf"><label for="pField">Field</label><input id="pField" autocomplete=organization-title required></div><div class="gf"><label for="pWeb">Website</label><input id="pWeb" type=url autocomplete=url></div></div>
+        <button class="go" type="submit">Send →</button></form>
+      <p class="err" hidden></p><p class="pdone" hidden></p></div>
+    </div></details>
+    <details><summary>Investors</summary><div class="acc-b split pab">
+      <p class="pdesc">VOIZEX as an investment opportunity.</p>
+      <div><form id="iForm" class="xform" data-kind="investor" novalidate><div class="g2">
+        <div class="gf"><label for="iName">Full name</label><input id="iName" autocomplete=name required></div><div class="gf"><label for="iEmail">Email</label><input id="iEmail" type=email autocomplete=email required></div><div class="gf"><label for="iWa">WhatsApp</label><input id="iWa" type=tel autocomplete=tel required></div><div class="gf"><label for="iWeb">Website</label><input id="iWeb" type=url autocomplete=url></div><div class="gf"><label for="iRole">Role</label><input id="iRole" autocomplete=organization-title></div></div>
+        <button class="go" type="submit">Request the deck →</button></form>
+      <p class="err" hidden></p><p class="pdone" hidden></p></div>
+    </div></details>
+  </div>
+  <div class="row"><div class="fcols"><div><p class="fh2">Contact us</p><p><a id="waLink" href="#" target="_blank" rel="noopener" hidden>WhatsApp</a><a href="mailto:wriwers@outlook.com">Email</a><a href="https://linkedin.com/in/wriwers" target="_blank" rel="noopener">LinkedIn</a></p></div></div></div>
   <p class="fine">VOIZEX. Think it. It happens. © 2026</p>
 </div></footer>
 
@@ -938,16 +973,12 @@ load('34');
 const form=$('#wl'),err=$('#wlError'),sub=$('#wlSubmit'),done=$('#wlDone');
 form.addEventListener('submit',async e=>{e.preventDefault();err.hidden=true;const email=$('#wlEmail').value.trim();
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){err.textContent='Check the email address, like you@studio.com.';err.hidden=false;$('#wlEmail').focus();return}
-const name=$('#wlName').value.trim().slice(0,120),company=$('#wlCo').value.trim().slice(0,160);if(!name){err.textContent='Add your name.';err.hidden=false;$('#wlName').focus();return}
-const create=myRoom;const entry={name,email,company,room:create?create+', '+ROOMS[create].name:'',quiz:{...ans},theme:cur(),page:location.href};
-sub.disabled=true;sub.textContent='Reserving…';let ok=false;
-if(/^https?:$/.test(location.protocol)){try{const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});ok=r.ok&&/json/.test(r.headers.get('content-type')||'')}catch(x){}}
-const rl=create?'\nRoom: '+create+', '+ROOMS[create].name:'';
-if(ok){$('#doneText').textContent=create?`Room ${create}, ${ROOMS[create].name}, is reserved for you. We will write to ${email} when your room is ready.`:`You are in. We will write to ${email} when your room is ready.`;form.hidden=true;done.hidden=false}
-else{const m='mailto:'+CONTACT+'?subject='+encodeURIComponent('VOIZEX early access')+'&body='+encodeURIComponent('Please add me to the VOIZEX queue.\n\nName: '+name+'\nEmail: '+email+(company?'\nCompany: '+company:'')+rl);
-const wt='https://wa.me/971585259461?text='+encodeURIComponent('Hello Ann, please add me to the VOIZEX queue.\n\nName: '+name+'\nEmail: '+email+(company?'\nCompany: '+company:'')+rl);window.open(wt,'_blank');$('#doneText').innerHTML=`Your request opened in WhatsApp. Send it and Ann will add you to the queue. Or <a href="${m}">send it by email</a>.`;form.hidden=true;done.hidden=false}
-sub.disabled=false;sub.textContent='Reserve my room →'});
-$('#wlAgain').onclick=()=>{form.reset();done.hidden=true;form.hidden=false;$('#wlName').focus()};
+const name=$('#wlName').value.trim().slice(0,120),field=$('#wlCo').value.trim().slice(0,160),website=$('#wlWeb').value.trim().slice(0,200);if(!name){err.textContent='Add your full name.';err.hidden=false;$('#wlName').focus();return}
+const room=myRoom?myRoom+', '+ROOMS[myRoom].name:'';
+sub.disabled=true;sub.textContent='Sending…';
+const ok=await window.vzLead({type:'client',name,email,field,website,room});
+sub.disabled=false;sub.textContent='Reserve my room →';
+if(ok){form.hidden=true;done.hidden=false}else{err.innerHTML=window.vzFail;err.hidden=false}});
 
 
 /* investor gate */
@@ -1437,4 +1468,12 @@ mb.addEventListener('click',()=>set(mn.hidden));mn.addEventListener('click',e=>{
 function go(d){if(!mq.matches||!d)return;var x=d.offsetLeft-(f.clientWidth-d.clientWidth)/2;f.scrollTo({left:x,behavior:'smooth'})}
 new MutationObserver(function(ms){ms.forEach(function(m){var d=m.target;if(d.classList&&d.classList.contains('door')&&(d.classList.contains('lit')||d.classList.contains('open'))&&!(m.oldValue||'').match(/\b(lit|open)\b/))go(d)})}).observe(f,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
 })();
+</script><script>
+(function(){document.querySelectorAll('.xform').forEach(function(f){var box=f.parentNode,er=box.querySelector('.err'),dn=box.querySelector('.pdone'),inv=f.dataset.kind==='investor',btn=f.querySelector('button'),lbl=btn.textContent;
+f.addEventListener('submit',async function(e){e.preventDefault();er.hidden=true;var v=function(id){return document.getElementById(id).value.trim()};var d;
+if(inv){d={type:'investor',name:v('iName'),email:v('iEmail'),whatsapp:v('iWa'),website:v('iWeb'),role:v('iRole')};if(!d.name||!d.email||!d.whatsapp){er.textContent='Add your full name, email and WhatsApp.';er.hidden=false;return}}
+else{d={type:'partner',name:v('pName'),email:v('pEmail'),field:v('pField'),website:v('pWeb')};if(!d.name||!d.email||!d.field){er.textContent='Add your full name, email and field.';er.hidden=false;return}}
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)){er.textContent='Check the email address.';er.hidden=false;return}
+btn.disabled=true;btn.textContent='Sending…';var ok=await window.vzLead(d);btn.disabled=false;btn.textContent=lbl;
+if(ok){dn.innerHTML='<b class="pth">Thank you.</b>We will be in touch.';dn.hidden=false;f.hidden=true}else{er.innerHTML=window.vzFail;er.hidden=false}})})})();
 </script></body></html>
