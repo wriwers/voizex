@@ -6,6 +6,8 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Think it. It happens.">
 <script>
+(function(){try{var q=new URLSearchParams(location.search),v=(q.get('from')||q.get('utm_source')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);if(v)localStorage.setItem('vz-src',v)}catch(e){}
+var f=window.fetch;window.fetch=function(u,o){try{if(o&&o.method==='POST'&&/^\/api\//.test(u)&&typeof o.body==='string'){var s=localStorage.getItem('vz-src');if(s){var b=JSON.parse(o.body);if(!b.src){b.src=s;o.body=JSON.stringify(b)}}}}catch(e){}return f.apply(this,arguments)}})();
 window.vzFail='Something went wrong. Write to us on <a href="https://wa.me/971585259461" target="_blank" rel="noopener">WhatsApp</a>.';
 window.vzLead=async function(d){if(!/^https?:$/.test(location.protocol))return true;
  try{const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.ok}catch(e){return false}};
