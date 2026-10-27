@@ -63,7 +63,7 @@ const ipOf = req => (req.headers['x-forwarded-for'] || '').split(',')[0].trim() 
 
 // One card per form, no buttons. The mark tells at a glance who wrote.
 const KINDS = { investor: '🔴 Investor', partner: '🟡 Partner', client: '🟢 Client' };
-const FIELDS = [['name', 'Имя'], ['email', 'Email'], ['whatsapp', 'WhatsApp'], ['field', 'Сфера'], ['role', 'Роль'], ['website', 'Сайт'], ['room', 'Комната']];
+const FIELDS = [['name', 'Имя'], ['email', 'Email'], ['whatsapp', 'WhatsApp'], ['field', 'Сфера'], ['role', 'Роль'], ['website', 'Сайт'], ['room', 'Комната'], ['src', 'Источник']];
 
 async function route(req, res) {
   const u = new URL(req.url, 'http://x'), ip = ipOf(req);
@@ -81,7 +81,7 @@ async function route(req, res) {
     const b = await body(req); const email = String(b.email || '').trim().slice(0, 200);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json(res, 400, { error: 'Check the email address.' });
     const q = b.quiz || {};
-    await tg(`<b>New guest</b>\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
+    await tg(`<b>New guest</b>\n${esc(email)}\nRoom: ${esc(b.room)}\nThoughts come: ${esc(q.when)}\nWhat happens to them: ${esc(q.fate)}\nWants: ${esc(q.want)}\nHow: ${esc(q.how)}${b.src ? '\nИсточник: ' + esc(String(b.src).slice(0, 40)) : ''}${b.dream ? '\nNote: ' + esc(String(b.dream).slice(0, 300)) : ''}`);
     return json(res, 200, { ok: true });
   }
   if (req.method === 'POST' && u.pathname === '/api/investor/request') {
@@ -94,7 +94,7 @@ async function route(req, res) {
     const ed = email.split('@')[1], fh = host(fund);
     if (!fh) return json(res, 400, { error: 'Add the fund website.' });
     const r = { e: email, n: name, f: fh, r: role, wa, at: Date.now() };
-    await tg(`<b>${KINDS.investor}</b>, opened the deck\nИмя: ${esc(name)}${role ? '\nРоль: ' + esc(role) : ''}\nФонд: ${esc(fh)}\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}`);
+    await tg(`<b>${KINDS.investor}</b>, opened the deck\nИмя: ${esc(name)}${role ? '\nРоль: ' + esc(role) : ''}\nФонд: ${esc(fh)}\nEmail: ${esc(email)}\nWhatsApp: +${esc(wa)}${b.src ? '\nИсточник: ' + esc(String(b.src).slice(0, 40)) : ''}`);
     return json(res, 200, { token: deckToken(r) });
   }
   if (req.method === 'GET' && u.pathname === '/api/deck') {
