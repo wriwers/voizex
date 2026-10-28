@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#021805">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Xanh+Mono&family=Inter:wght@200;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Xanh+Mono&family=Cormorant+Garamond&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/n/set.jpg">
 <script>
 /* lead source: ?from=… is remembered and attached to every form */
@@ -129,48 +129,25 @@ h1,h2,h3,.mono{font-family:var(--mono);font-weight:400;letter-spacing:0;margin:0
 @keyframes turn{to{transform:rotate(360deg)}}
 .eye::before{content:"";position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(100,167,119,.16),transparent 70%);filter:blur(30px)}
 
-/* ---------- rooms ---------- */
-.rooms{background:var(--g1);padding:calc(170*var(--k)) 0 calc(190*var(--k));position:relative}
-.rooms h2{font-size:max(30px,calc(117.6*var(--k)));margin-bottom:calc(130*var(--k))}
-.floor{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(110*var(--k)) calc(70*var(--k))}
-.door{position:relative;cursor:pointer;outline:none;isolation:isolate}
-.door .frame{position:relative;aspect-ratio:3/4.3;border-radius:max(8px,calc(18*var(--k)));perspective:1100px;border:1px solid rgba(160,210,180,.35);background:#04110a;overflow:hidden;transition:border-color .4s,box-shadow .6s}
-.door .inside{position:absolute;inset:0;overflow:hidden}
-.door .in-scene,.door .in-scene svg{width:100%;height:100%;display:block}
-.door .leaf{position:absolute;top:0;bottom:0;width:50%;display:flex;justify-content:center;
-  background:radial-gradient(90% 50% at 30% 18%,rgba(255,255,255,.09),transparent 60%),linear-gradient(170deg,rgba(24,58,38,.92),rgba(5,18,11,.97));
-  border:1px solid rgba(160,210,180,.28);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  transition:transform 1.1s cubic-bezier(.7,0,.2,1),opacity 1.1s}
-.door .leaf.l{left:0;transform-origin:left center;border-radius:inherit;border-top-right-radius:0;border-bottom-right-radius:0}
-.door .leaf.r{right:0;transform-origin:right center;border-radius:inherit;border-top-left-radius:0;border-bottom-left-radius:0}
-.door .leaf::after{content:"";position:absolute;top:50%;width:1px;height:14%;background:rgba(228,240,222,.55);border-radius:2px}
-.door .leaf.l::after{right:10%}.door .leaf.r::after{left:10%}
-.door .dn{position:absolute;top:9%;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:max(20px,calc(70*var(--k)));z-index:3;transition:opacity .5s,transform 1.1s cubic-bezier(.7,0,.2,1);pointer-events:none}
-.door .dname{display:block;margin-top:max(8px,calc(22*var(--k)));font-family:var(--mono);font-size:max(12px,calc(32*var(--k)));opacity:.7}
-.door .dname::before{content:"· "}
-.door .glowin{position:absolute;inset:-8%;border-radius:20%;background:radial-gradient(circle,rgba(127,224,160,.28),transparent 65%);opacity:0;transition:opacity .6s;z-index:-1;filter:blur(14px)}
-.door:hover .frame,.door:focus-visible .frame{border-color:rgba(228,240,222,.8)}
-.door:hover .leaf.l{transform:rotateY(-9deg)}.door:hover .leaf.r{transform:rotateY(9deg)}
-.door.lit .glowin,.door.soft .glowin{opacity:1}
-.door.lit .frame{border-color:#a5e1b6;box-shadow:0 0 34px rgba(127,224,160,.22)}
-.door.open .leaf.l{transform:rotateY(-104deg)}.door.open .leaf.r{transform:rotateY(104deg)}
-.door.open .dn{opacity:0;transform:translate(-50%,-30%)}
-.door.open .glowin{opacity:.8}
-.door .enter{display:inline-block;margin-left:.6em;font-family:var(--mono);font-size:max(12px,calc(32*var(--k)));opacity:0;transition:opacity .5s .6s;text-decoration:underline;text-underline-offset:.22em}
-.door.open .enter{opacity:1}
-
-/* scene animations (from the previous site, retinted) */
-.an-blink{animation:tw 3s ease-in-out infinite}.an-drift{animation:drift 9s ease-in-out infinite alternate}
-.an-slide{animation:slide 10s linear infinite}.an-spin{animation:turn 6s linear infinite;transform-box:fill-box;transform-origin:center}
-.an-rise{animation:rise2 4s ease-in-out infinite}.an-type{animation:tw 2.4s steps(3) infinite}
-.an-hue{animation:tw 6s ease-in-out infinite}.an-pulse{animation:tw 3s ease-in-out infinite}
-.an-wave{animation:drift 4s ease-in-out infinite alternate}.an-flicker{animation:tw .9s ease-in-out infinite}
-.an-clouds{animation:slide 14s linear infinite}.an-signal circle{animation:tw 1.6s ease-in-out infinite}
-.an-signal circle:nth-child(2){animation-delay:.2s}.an-signal circle:nth-child(3){animation-delay:.4s}.an-signal circle:nth-child(4){animation-delay:.6s}
-.an-blink2{animation:blink 5s infinite;transform-box:fill-box;transform-origin:center}
-.an-w1,.an-w2,.an-w3{animation:tw 3s ease-in-out infinite}.an-w2{animation-delay:1s}.an-w3{animation-delay:2s}
-@keyframes tw{50%{opacity:.25}}@keyframes drift{to{transform:translateX(30px)}}@keyframes slide{to{transform:translateX(-90px)}}
-@keyframes rise2{0%{transform:translateY(8px);opacity:0}40%{opacity:1}100%{transform:translateY(-16px);opacity:0}}
+/* ---------- rooms: frame «VOIZEX — Rooms — Motion» (2317 wide) ---------- */
+.rooms{position:relative;padding:calc(93*var(--k)) 0 calc(150*var(--k));background:radial-gradient(70% 60% at 50% 40%,#0d2619 0%,#06130c 60%,#020805 100%)}
+.rooms .px{padding-left:calc(116*var(--k));padding-right:calc(116*var(--k))}
+.rooms h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:max(34px,calc(110*var(--k)));letter-spacing:-.02em;color:#dde5db;line-height:1}
+.rooms .rule{height:1px;background:#42634e;opacity:.6;margin:calc(40*var(--k)) 0 calc(63*var(--k))}
+.floor{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(55*var(--k)) calc(34.76*var(--k))}
+.door{cursor:pointer;outline:none;display:flex;flex-direction:column;gap:calc(26*var(--k))}
+.portal{aspect-ratio:388.1/492.4;position:relative;transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .6s}
+.portal svg{width:100%;height:100%;display:block;overflow:visible}
+.portal .lf{transform-box:fill-box;transform-origin:0 50%}
+.portal .ob{transform-box:fill-box;transform-origin:50% 50%}
+.portal .bl{transform-box:fill-box;transform-origin:50% 50%}
+.door:hover .portal,.door:focus-visible .portal{transform:translateY(-4px)}
+.door.lit .portal,.door.soft .portal{filter:drop-shadow(0 0 22px rgba(197,229,206,.35))}
+.rlabel{display:flex;align-items:baseline;gap:calc(18.8*var(--k))}
+.rn{font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:max(11px,calc(15.93*var(--k)));letter-spacing:1.3px;color:#8dab99}
+.rname{font-family:'Cormorant Garamond',Georgia,serif;font-size:max(17px,calc(39.1*var(--k)));color:#dde5db}
+.door:focus-visible .rname{text-decoration:underline;text-underline-offset:.2em}
+@keyframes tw{50%{opacity:.25}}
 
 /* ---------- just imagine ---------- */
 .imagine{background:var(--g2);padding:calc(170*var(--k)) 0 calc(190*var(--k))}
@@ -271,7 +248,8 @@ h1,h2,h3,.mono{font-family:var(--mono);font-weight:400;letter-spacing:0;margin:0
   .eye{order:-1;width:min(78%,420px);margin:0 auto}
   .glass{width:100%}
   .steps{margin:30px 0 24px}
-  .floor{grid-template-columns:repeat(2,1fr);gap:26px 18px}
+  .floor{grid-template-columns:repeat(2,1fr);gap:30px 16px}
+  .rooms .px{padding-left:20px;padding-right:20px}
   .rooms,.imagine,.queue,.foot{padding:80px 0}
   .rooms h2,.imagine h2,.queue h2,.foot h2{margin-bottom:40px}
   .objp{min-height:360px}
@@ -332,7 +310,8 @@ h1,h2,h3,.mono{font-family:var(--mono);font-weight:400;letter-spacing:0;margin:0
 
 <!-- 4 · rooms -->
 <section class="rooms" id="rooms"><div class="wrap px">
-  <h2 class="rv">Every thought<br>has a room.</h2>
+  <h2 class="rv">Every thought has a room.</h2>
+  <div class="rule"></div>
   <div class="floor" id="floor"></div>
 </div></section>
 
@@ -533,30 +512,48 @@ function result(){qs.forEach(k=>k.classList.add('on'));const [no,m]=ans.room.spl
  markFloor();$('#myRoom').textContent=`Your room: ${no}, ${R.name}`;$('#myRoom').hidden=false;load(no)}
 qb.addEventListener('click',e=>{const b=e.target.closest('.opt');if(b){ans[b.dataset.k]=b.dataset.v;const n=QUIZ.findIndex(s=>s.k===b.dataset.k);n<QUIZ.length-1?step(n+1):result();return}
  if(e.target.closest('#qr')){for(const k in ans)delete ans[k];myRoom=null;mood=null;$('#myRoom').hidden=true;markFloor();step(0);return}
- if(e.target.closest('#qkey')||e.target.closest('#qgo')){const d=floor.querySelector(`.door[data-no="${myRoom}"]`);$$('.door.open',floor).forEach(x=>x.classList.remove('open'));d.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});clearTimeout(autoT);autoT=setTimeout(()=>{if(!d.classList.contains('open')){d.classList.add('soft');showRoom(myRoom);setTimeout(()=>d.classList.remove('soft'),2200)}},reduce?0:1400)}});
+ if(e.target.closest('#qkey')||e.target.closest('#qgo')){const d=floor.querySelector(`.door[data-no="${myRoom}"]`);d.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});clearTimeout(autoT);autoT=setTimeout(()=>showRoom(myRoom),reduce?0:900)}});
 step(0);
 
-/* floor of doors: ten ovals, two rows of five, as in the layout */
+/* floor of doors: exported from «VOIZEX — Rooms — Motion»; timing = her keyframes (18 s timeline) */
 const floor=$('#floor');
-const ARCH=(inner,id)=>`<svg viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="sg${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky-top)"/><stop offset="1" style="stop-color:var(--horizon)"/></linearGradient></defs><rect width="300" height="360" fill="url(#sg${id})"/>${inner}</svg>`;
-const GROUND='<rect y="290" width="300" height="70" style="fill:var(--desert)"/>';
-const SCENES={
-'34':`<circle cx="200" cy="110" r="34" style="fill:var(--sun)"/><circle cx="216" cy="98" r="30" style="fill:var(--sky-top)"/><g class="an-blink"><circle cx="80" cy="80" r="2.5" style="fill:var(--sun)"/><circle cx="120" cy="140" r="2" style="fill:var(--sun)"/><circle cx="250" cy="200" r="2" style="fill:var(--sun)"/></g>${GROUND}<g class="an-drift"><rect x="40" y="262" width="70" height="26" rx="6" style="fill:var(--strip)"/><rect x="112" y="262" width="56" height="26" rx="6" style="fill:var(--strip)"/><circle cx="60" cy="290" r="6" style="fill:var(--mesa)"/><circle cx="96" cy="290" r="6" style="fill:var(--mesa)"/><circle cx="130" cy="290" r="6" style="fill:var(--mesa)"/><circle cx="156" cy="290" r="6" style="fill:var(--mesa)"/></g>`,
-'35':`<circle cx="150" cy="120" r="70" style="fill:var(--sun)" opacity=".35"/>${GROUND}<g class="an-slide"><rect x="-60" y="170" width="420" height="80" style="fill:var(--strip)"/><g style="fill:var(--sun)"><rect x="-40" y="182" width="70" height="56" rx="3"/><rect x="50" y="182" width="70" height="56" rx="3"/><rect x="140" y="182" width="70" height="56" rx="3"/><rect x="230" y="182" width="70" height="56" rx="3"/><rect x="320" y="182" width="70" height="56" rx="3"/></g></g>`,
-'36':`${GROUND}<g transform="translate(150 200)"><g class="an-spin"><circle r="80" style="fill:var(--strip)"/><circle r="60" fill="none" stroke="#fff" stroke-opacity=".12"/><circle r="40" fill="none" stroke="#fff" stroke-opacity=".12"/><circle r="22" style="fill:var(--accent)"/><circle r="4" style="fill:var(--sun)"/></g></g><g class="an-rise" style="fill:var(--eye-line)"><text x="70" y="90" font-size="34">♪</text><text x="210" y="70" font-size="28">♫</text></g>`,
-'37':`${GROUND}<g transform="translate(150 230)"><path d="M0 -70 C-40 -84 -90 -80 -110 -70 V40 C-90 30 -40 26 0 40 Z" style="fill:var(--sun)"/><path d="M0 -70 C40 -84 90 -80 110 -70 V40 C90 30 40 26 0 40 Z" style="fill:var(--sun)"/><g style="stroke:var(--strip)" stroke-width="2" opacity=".4"><path d="M-90 -50 H-20 M-90 -34 H-20 M-90 -18 H-30 M-90 -2 H-20"/></g><g class="an-type" style="stroke:var(--strip)" stroke-width="2"><path d="M20 -50 H90 M20 -34 H90 M20 -18 H80"/></g></g>`,
-'38':`<g class="an-hue"><rect width="300" height="360" style="fill:var(--accent)" opacity=".35"/></g><rect x="80" y="90" width="140" height="170" rx="70" style="fill:var(--sun)" opacity=".9"/><path d="M150 90 V260 M80 175 H220" style="stroke:var(--strip)" stroke-width="6"/>${GROUND}<g class="an-pulse"><circle cx="150" cy="175" r="60" style="fill:var(--accent)" opacity=".25"/></g>`,
-'39':`<rect y="250" width="300" height="110" style="fill:var(--sky-top)" opacity=".8"/><rect y="250" width="300" height="8" style="fill:var(--sun)" opacity=".7"/><g class="an-rise" fill="none" style="stroke:var(--sun)" stroke-width="4" stroke-linecap="round"><path d="M90 230 q-12 -22 0 -44 q12 -22 0 -44"/><path d="M150 230 q-12 -22 0 -44 q12 -22 0 -44"/><path d="M210 230 q-12 -22 0 -44 q12 -22 0 -44"/></g>`,
-'40':`<rect y="230" width="300" height="130" style="fill:var(--sky-top)"/><g class="an-wave" fill="none" style="stroke:var(--sun)" stroke-width="2" opacity=".6"><path d="M0 250 q25 -8 50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g><rect x="60" y="268" width="180" height="10" rx="5" style="fill:var(--strip)"/><path d="M110 268 V220 M190 268 V220" style="stroke:var(--sun)" stroke-width="3"/><path d="M98 196 h24 l-4 24 h-16z M178 196 h24 l-4 24 h-16z" style="fill:var(--sun)" opacity=".85"/><g class="an-flicker"><ellipse cx="150" cy="240" rx="6" ry="12" style="fill:var(--accent)"/></g><rect x="146" y="250" width="8" height="18" style="fill:var(--sun)"/>`,
-'41':`<rect width="300" height="360" style="fill:var(--strip)" opacity=".85"/><rect x="70" y="70" width="160" height="220" rx="80" style="fill:var(--sky-top)"/><clipPath id="win41"><rect x="70" y="70" width="160" height="220" rx="80"/></clipPath><g clip-path="url(#win41)"><g class="an-clouds" style="fill:var(--sun)"><rect x="40" y="110" width="80" height="20" rx="10"/><rect x="150" y="150" width="70" height="18" rx="9"/><rect x="60" y="200" width="100" height="22" rx="11"/><rect x="180" y="230" width="80" height="20" rx="10"/><rect x="200" y="100" width="60" height="16" rx="8"/></g><rect x="70" y="250" width="160" height="40" style="fill:var(--horizon)"/></g><rect x="70" y="70" width="160" height="220" rx="80" fill="none" style="stroke:var(--frame)" stroke-width="6"/>`,
-'42':`${GROUND}<g style="fill:var(--strip)"><circle cx="80" cy="200" r="16"/><path d="M60 290 V236 q20 -16 40 0 V290z"/><circle cx="220" cy="200" r="16"/><path d="M200 290 V236 q20 -16 40 0 V290z"/></g><g class="an-signal" style="fill:var(--accent)"><circle cx="110" cy="205" r="5"/><circle cx="135" cy="205" r="5"/><circle cx="160" cy="205" r="5"/><circle cx="185" cy="205" r="5"/></g>`,
-'43':`<g transform="translate(150 150)"><g class="an-blink2"><path d="M-80 0 Q0 -56 80 0 Q0 56 -80 0Z" style="fill:var(--eye);stroke:var(--eye-line)" stroke-width="3"/><circle r="24" style="fill:var(--iris)"/><circle r="10" fill="#061009"/></g></g><g style="fill:var(--sun);font-family:var(--mono)" font-size="20"><text class="an-w1" x="40" y="250">not now</text><text class="an-w2" x="170" y="280">later</text><text class="an-w3" x="80" y="320">not now</text></g>`
-};
-floor.innerHTML=Object.entries(ROOMS).map(([no,R],i)=>`<div class="door rv" style="transition-delay:${(i%5)*80}ms" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><span class="glowin"></span><div class="frame"><div class="inside"><div class="in-scene"></div></div><span class="leaf l"></span><span class="leaf r"></span><span class="dn">${no}</span></div><span class="dname">${esc(R.name)}</span><span class="enter">Enter →</span></div>`).join('');
-$$('.door.rv',floor).forEach(el=>io.observe(el));
+const START={'36':1.0,'34':1.62,'35':2.24,'37':2.86,'38':3.48,'39':4.1,'40':4.72,'41':5.34,'42':5.96,'43':6.58};
+const EASE='cubic-bezier(.42,0,.58,1)';
+floor.innerHTML=Object.entries(ROOMS).map(([no,R])=>`<div class="door" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><div class="portal" id="portal${no}"></div><div class="rlabel"><span class="rn">${no}</span><span class="rname">${esc(R.name)}</span></div></div>`).join('');
+const NS='http://www.w3.org/2000/svg';
+const wrap=(el,cls)=>{if(!el)return null;const g=document.createElementNS(NS,'g');g.setAttribute('class',cls);el.parentNode.insertBefore(g,el);g.appendChild(el);return g};
+const parts={};
+const ready=Promise.all(Object.keys(ROOMS).map(no=>fetch(`/n/rooms/door-${no}.svg?v=3`).then(r=>r.text()).then(t=>{
+  const host=$('#portal'+no);host.innerHTML=t;const svg=host.querySelector('svg');svg.setAttribute('aria-hidden','true');
+  const q=n=>svg.querySelector(`g[data-n="${n}"]`);
+  const glow=q('DoorGlow '+no);if(glow)glow.removeAttribute('opacity');
+  parts[no]={leaf:wrap(q('DoorLeaf '+no),'lf'),glow,obj:wrap(q('RoomObject '+no),'ob'),
+    lid:wrap(q('Silver eyelid'),'bl'),ap:svg.querySelector('clipPath[data-n="Blink aperture"] path')};
+  if(glow)glow.style.opacity=.12;
+}).catch(()=>{})));
+const T=(a,frames,opt)=>a&&a.animate(frames,{fill:'both',...opt});
+function playDoors(){Object.entries(parts).forEach(([no,p])=>{const s=(START[no]||1)*1000;
+  /* frame glow: 12% → 100% → 90% → 38% */
+  T(p.glow,[{opacity:.12},{opacity:1,offset:.35/2},{opacity:.9,offset:1.3/2},{opacity:.38}],{duration:2000,delay:s,easing:EASE});
+  /* leaf folds to its hinges, then fades */
+  T(p.leaf,[{transform:'scaleX(1)'},{transform:'scaleX(.015)'}],{duration:900,delay:s+400,easing:EASE});
+  T(p.leaf,[{opacity:1},{opacity:0}],{duration:250,delay:s+1050,easing:EASE});
+  if(p.leaf)p.leaf.style.pointerEvents='none';
+  /* the object inside: vinyl turns, the rest lifts once by 4 px */
+  if(no==='36')T(p.obj,[{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],{duration:15700,delay:s+1300,iterations:Infinity,easing:'linear'});
+  else T(p.obj,[{transform:'translateY(0)'},{transform:'translateY(-4.34px)'},{transform:'translateY(0)'}],{duration:5600,delay:s+1300,easing:EASE});
+  /* room 43: the eye blinks at 9.1 s and 14.1 s, then every 5 s (close .18 s, hold .05 s, open .29 s) */
+  if(p.lid){T(p.lid,[{transform:'scaleY(1)'},{transform:'scaleY(.012)',offset:.18/5},{transform:'scaleY(.012)',offset:.23/5},{transform:'scaleY(1)',offset:.52/5},{transform:'scaleY(1)'}],{duration:5000,delay:9100,iterations:Infinity,easing:EASE});
+   if(p.ap){const base=p.ap.getAttribute('transform')||'';const bb=p.lid.getBBox();const cy=bb.y+bb.height/2;
+    const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+    const sy=t=>{if(t<.18)return 1-(1-.012)*ease(t/.18);if(t<.23)return .012;if(t<.52)return .012+(1-.012)*ease((t-.23)/.29);return 1};
+    const t0=performance.now()+9100;(function tick(now){const t=((now-t0)/1000)%5;const v=now<t0?1:sy(t);p.ap.setAttribute('transform',`${base} translate(0 ${cy*(1-v)}) scale(1 ${v})`);requestAnimationFrame(tick)})(performance.now())}}
+})}
+let played=false;
+new IntersectionObserver(es=>{if(!played&&es.some(e=>e.isIntersecting)){played=true;ready.then(()=>{if(reduce){Object.values(parts).forEach(p=>{if(p.leaf)p.leaf.style.opacity=0;if(p.glow)p.glow.style.opacity=.38})}else playDoors()})}},{threshold:.25}).observe(floor);
 function markFloor(){$$('.door',floor).forEach(d=>d.classList.toggle('lit',d.dataset.no===myRoom))}
-function showRoom(no){$$('.door',floor).forEach(d=>{const on=d.dataset.no===no;d.classList.toggle('open',on);const sc=d.querySelector('.in-scene');if(on&&!sc.innerHTML)sc.innerHTML=ARCH(SCENES[d.dataset.no],d.dataset.no)})}
-const tap=d=>{clearTimeout(autoT);d.classList.contains('open')?openRoom(d.dataset.no):showRoom(d.dataset.no)};
+function showRoom(no){const d=floor.querySelector(`.door[data-no="${no}"]`);if(d){d.classList.add('soft');setTimeout(()=>d.classList.remove('soft'),2200)}}
+const tap=d=>{clearTimeout(autoT);openRoom(d.dataset.no)};
 floor.addEventListener('click',e=>{const d=e.target.closest('.door');if(d)tap(d)});
 floor.addEventListener('keydown',e=>{const d=e.target.closest('.door');if(d&&(e.key==='Enter'||e.key===' ')&&e.target===d){e.preventDefault();tap(d)}});
 function openRoom(no){load(no);$('#imagine').scrollIntoView({behavior:reduce?'auto':'smooth'});setTimeout(play,reduce?0:650)}
