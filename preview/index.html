@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VOIZEX — Think it. It happens.</title>
+<meta name="description" content="Think it. It happens.">
+<meta property="og:title" content="VOIZEX">
+<meta property="og:description" content="Think it. It happens.">
+<meta name="theme-color" content="#021805">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Xanh+Mono:ital@0;1&display=swap" rel="stylesheet">
+<script>
+/* lead source: ?from=… is remembered and attached to every form */
+(function(){try{var q=new URLSearchParams(location.search),v=(q.get('from')||q.get('utm_source')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);if(v)localStorage.setItem('vz-src',v)}catch(e){}
+var f=window.fetch;window.fetch=function(u,o){try{if(o&&o.method==='POST'&&/^\/api\//.test(u)&&typeof o.body==='string'){var s=localStorage.getItem('vz-src');if(s){var b=JSON.parse(o.body);if(!b.src){b.src=s;o.body=JSON.stringify(b)}}}}catch(e){}return f.apply(this,arguments)}})();
+window.vzFail='Something went wrong. Write to us on <a href="https://wa.me/971585259461" target="_blank" rel="noopener">WhatsApp</a>.';
+window.vzLead=async function(d){if(!/^https?:$/.test(location.protocol))return true;
+ try{const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.ok}catch(e){return false}};
+</script>
+<style>/* One world: the inner rooms. Dark halls, one source of light, marble, green.
+   Xanh Mono speaks, Helvetica Neue thin labels. No rules, no lines. */
+:root{
+  --serif:'Xanh Mono',ui-monospace,monospace;
+  --sans:'Helvetica Neue','HelveticaNeue-Thin',Helvetica,system-ui,sans-serif;
+  --ink:#eef3ec; --ink2:rgba(238,243,236,.68); --ink3:rgba(238,243,236,.42);
+  --bg:#040c08; --deep:#02080a;
+  --glass:rgba(8,22,14,.38); --glass-edge:rgba(200,228,208,.16);
+  --glow:rgba(170,235,195,.28);
+}
+*{box-sizing:border-box}
+html{background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:var(--serif);font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:1px solid rgba(200,228,208,.5);outline-offset:4px}
+::selection{background:#cfe6d6;color:#02080a}
+.cap{font-family:var(--serif);font-weight:400;font-size:15px;letter-spacing:0}
+.wrap{width:min(100%,1440px);margin:0 auto;padding:0 clamp(20px,5vw,72px);position:relative}
+h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0;line-height:.98}
+.it{font-style:italic;font-weight:400}
+/* full-bleed hall behind a section */
+.hall{position:relative;overflow:hidden;isolation:isolate}
+.hall>.bgimg{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center}
+.hall>.veil{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.grain::after{display:none;content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.08;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* top bar */
+.top{position:fixed;inset:0 0 auto 0;z-index:40;transform:translateY(-110%);transition:transform .6s cubic-bezier(.2,.7,.2,1);background:rgba(3,10,7,.92)}
+.top.on{transform:none}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.top .mark{font-family:var(--serif);font-size:22px;letter-spacing:.06em}
+.top nav{display:flex;gap:30px}
+.top nav a{opacity:.62;transition:opacity .3s}.top nav a:hover,.top nav a.res{opacity:1}
+
+/* lobby */
+.lobby{min-height:100svh;display:flex;flex-direction:column;justify-content:space-between}
+.lobby{background:#04150b}
+.lobby .bgimg{background-image:var(--img-lobby);background-repeat:no-repeat;background-size:cover;background-position:center;left:auto;right:-3vw;top:-9%;bottom:-9%;width:min(118svh,72vw);-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);mask-image:linear-gradient(90deg,transparent 0%,#000 38%)}
+.lobby .veil{background:linear-gradient(180deg,rgba(2,10,5,.55) 0%,rgba(2,10,5,.05) 30%,rgba(2,10,5,.05) 62%,rgba(3,14,7,.78) 88%,var(--bg) 100%)!important}
+@media (max-aspect-ratio:1/1){.lobby .bgimg{inset:0;width:auto;max-width:none;-webkit-mask-image:none;mask-image:none;background-position:62% 50%}.lobby .veil{background:linear-gradient(180deg,rgba(2,10,5,.55),rgba(2,10,5,.05) 30%,rgba(3,14,7,.85) 80%,var(--bg))!important}}
+@keyframes breathe{to{transform:scale(1.08)}}
+.lobby .veil{background:linear-gradient(180deg,rgba(2,10,5,.55) 0%,rgba(2,10,5,.08) 30%,rgba(2,10,5,.10) 62%,rgba(3,14,7,.78) 88%,var(--bg) 100%),radial-gradient(90% 70% at 70% 45%,transparent 40%,rgba(2,10,5,.45) 100%)}
+.lobby .cta{color:var(--ink);text-decoration:underline;text-underline-offset:.25em;font-size:20px;opacity:0;animation:rise 1.4s 1s forwards}
+.lobby .head{display:flex;justify-content:space-between;align-items:center;padding-top:32px}
+.lobby .mark{font-size:26px;letter-spacing:.08em}
+.lobby nav{display:flex;gap:30px}.lobby nav a{opacity:.72}.lobby nav a:hover{opacity:1}
+.lobby .piece{position:absolute;left:56%;bottom:13%;width:min(31vw,470px);transform:translateX(-50%);z-index:1;filter:drop-shadow(0 30px 40px rgba(0,0,0,.45))}
+.lobby .piece img{width:100%;display:block}
+.lobby .beam{position:absolute;left:50%;top:-10%;width:34vw;height:110%;transform:translateX(-50%);z-index:0;pointer-events:none;background:radial-gradient(50% 60% at 50% 30%,rgba(220,245,228,.10),transparent 70%);mix-blend-mode:screen;animation:beam 7s ease-in-out infinite alternate}
+@keyframes beam{from{opacity:.55}to{opacity:1}}
+.lobby .title{position:relative;z-index:2;padding-bottom:9vh;display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.lobby h1{font-size:clamp(54px,9vw,148px)}
+.lobby h1 span{display:block;opacity:0;transform:translateY(.25em);filter:blur(10px);animation:rise 1.6s cubic-bezier(.2,.7,.2,1) forwards}
+.lobby h1 span+span{animation-delay:.4s}
+.lobby .sub{max-width:330px;font-size:20px;line-height:1.35;color:var(--ink2);opacity:0;animation:rise 1.4s 1s forwards}
+.lobby .sub .cap{display:block;margin-top:22px;color:var(--ink)}
+@keyframes rise{to{opacity:1;transform:none;filter:none}}
+#dust{position:absolute;inset:0;z-index:1;pointer-events:none;width:100%;height:100%}
+
+/* the set, on the round stage */
+.setsec{min-height:100svh}
+.setsec .bgimg{background:linear-gradient(180deg,#021805 0%,#052605 38%,#032906 73%,#011905 98%)}
+.setsec .veil{background:linear-gradient(90deg,rgba(2,8,5,.88) 0%,rgba(2,8,5,.55) 34%,transparent 60%),linear-gradient(180deg,var(--bg),transparent 18%,transparent 82%,var(--bg))}
+.set-grid{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:4vw;align-items:center;min-height:100svh;padding-top:12vh;padding-bottom:6vh}
+.set-copy .cap{color:var(--ink3)}
+.tabs{display:flex;gap:26px;margin:0 0 7vh}
+.tab{background:none;border:0;padding:6px 0;cursor:pointer;opacity:.42;transition:opacity .4s;font-family:var(--serif);font-size:18px}
+.tab[aria-pressed=true],.tab:hover{opacity:1}
+.ring{position:relative}
+.ring .spec{display:block;margin-bottom:22px}
+.ring h2{font-size:clamp(48px,6vw,92px);margin-bottom:26px}
+.ring p{font-size:21px;line-height:1.4;color:var(--ink2);margin:0;max-width:380px}
+.ring .in>*{transition:opacity .5s,filter .5s}
+.ring.swap .in>*{opacity:0;filter:blur(8px)}
+.vit{position:relative;height:min(84svh,900px);margin-top:10vh;-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);mask-image:radial-gradient(closest-side,#000 70%,transparent 100%)}
+.spin{position:absolute;inset:0;overflow:hidden;cursor:grab;touch-action:pan-y;outline:none}
+.spin:active{cursor:grabbing}
+.spincv{-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent);mask-image:radial-gradient(closest-side,#000 72%,transparent);width:100%;height:100%;display:block;transition:opacity .35s,transform .45s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.spin img{display:none}
+.zoom{position:absolute;right:6%;bottom:12%;z-index:3;display:flex;flex-direction:column;gap:10px}
+.zoom button{width:40px;height:40px;border-radius:50%;background:var(--glass);border:0;color:var(--ink);font-family:var(--sans);font-weight:300;font-size:18px;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--glass-edge)}
+.v3dhint{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);z-index:3;color:var(--ink3);white-space:nowrap}
+#v3dNote{display:none}
+
+/* questionnaire: glass over a quiet wall */
+.mind{position:relative;height:100svh;min-height:560px;background:#010403;overflow:hidden}
+.mind .breath{position:absolute;inset:0;z-index:0;pointer-events:none;transition:opacity 2.2s ease}
+.mind .breath i{position:absolute;inset:-10%;background:radial-gradient(48% 52% at 50% 50%,rgba(22,78,48,.85),rgba(9,38,23,.5) 45%,rgba(1,4,3,0) 78%);animation:mindBreath 4.8s ease-in-out infinite alternate}
+@keyframes mindBreath{from{opacity:.35;transform:scale(.94)}to{opacity:1;transform:scale(1.05)}}
+.mind.on .breath{opacity:0}
+.mind .mv{z-index:1}
+.mind::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8%;background:linear-gradient(180deg,rgba(4,12,8,0),var(--bg));pointer-events:none;z-index:3}
+.mind .mv{position:absolute;inset:0;transform:translate3d(0,0,0) scale(1);transform-origin:50% 50%;}
+.mind .mv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity 1.6s ease;transform:translateZ(0)}
+.mind .mv .edge{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#010403 0%,rgba(1,4,3,0) 9%,rgba(1,4,3,0) 91%,#010403 100%),linear-gradient(180deg,#010403 0%,rgba(1,4,3,0) 7%,rgba(1,4,3,0) 95%,#010403 100%)}
+.mind.on .mv video{opacity:1}
+.mind-copy{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:32%;pointer-events:none;z-index:4}
+.mind-copy p{margin:0 0 1.4em;font-family:var(--serif);font-size:clamp(18px,1.7vw,28px);line-height:1.32;color:var(--ink);opacity:0;transform:translate3d(0,12px,0);transition:opacity 1.4s ease,transform 1.4s ease}
+.mind-copy p:first-child{font-size:clamp(22px,2.2vw,36px)}
+.mind-copy p.on{opacity:1;transform:none}
+@media (max-width:860px){.mind{height:auto;min-height:0;padding-bottom:40px}.mind .mv,.mind.split .mv{position:relative;inset:auto;height:62vw;transform:none}.mind-copy{position:relative;right:auto;top:auto;transform:none;width:auto;padding:28px 24px 0}}
+.ask{min-height:100svh;display:flex;align-items:flex-start;padding-top:14vh}
+.ask .net{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.ask .bgimg{background:radial-gradient(70% 60% at 30% 35%,#0b2a17 0%,#06170d 55%,#030b06 100%)}
+.ask .veil{background:linear-gradient(180deg,var(--bg),transparent 18%,transparent 82%,var(--bg))}
+.ask-card{width:min(100%,620px);padding:56px 52px 44px;border-radius:28px;background:var(--glass);box-shadow:inset 0 0 0 1px var(--glass-edge),0 40px 80px -30px rgba(0,0,0,.6)}
+.ask-card .cap{color:var(--ink3);display:flex;justify-content:space-between}
+.ask h2{font-size:clamp(30px,3vw,44px);margin:22px 0 26px;height:2.3em;display:flex;align-items:flex-start;line-height:1.12}
+.ask-card{height:580px;display:flex;flex-direction:column}.qbody{flex:1}
+#qsteps{display:none}
+.opts{display:grid;grid-template-rows:repeat(4,1fr);gap:6px;height:100%;max-height:330px}
+.opt{display:flex;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-radius:16px;padding:14px 20px;font-family:var(--sans);font-weight:200;font-size:24px;cursor:pointer;color:var(--ink2);transition:background .35s,color .35s}
+.opt:hover,.opt:focus-visible,.opt.pick{background:rgba(200,228,208,.08);color:var(--ink);outline:none}
+.qbody.step-in{animation:qin .6s cubic-bezier(.2,.7,.2,1)}
+@keyframes qin{from{opacity:0;filter:blur(4px)}}
+.keytag{display:flex;align-items:baseline;gap:22px;background:none;border:0;cursor:pointer;padding:6px 20px;text-align:left}
+.keytag .kn{font-size:96px;font-weight:300;line-height:1}
+.keytag .kname{font-size:36px;font-style:italic}
+.keytag .kh-ring{display:none}
+.kacts{display:flex;justify-content:space-between;padding:22px 20px 0}
+.ulink{background:none;border:0;cursor:pointer;opacity:.7;padding:6px 0}.ulink:hover{opacity:1}
+
+/* rooms: ten doors, each a slit of its own room behind a veil */
+.rooms{padding:18vh 0 14vh;background:radial-gradient(60% 50% at 50% 40%,#0a1d13,var(--bg) 70%)}
+.rooms .lead{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:8vh}
+.rooms h2{font-size:clamp(46px,6vw,96px)}
+.rooms .lead .cap{color:var(--ink3);max-width:260px;line-height:2}
+.floor{display:grid;grid-template-columns:repeat(5,1fr);gap:3.2vw 2vw}
+.door{position:relative;cursor:pointer;outline:none}
+.door .pane{position:relative;aspect-ratio:3/5;border-radius:160px 160px 14px 14px;overflow:hidden;background:#06130c;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);transition:box-shadow 1s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.door .pane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;filter:saturate(.8) brightness(.9);transform:scale(1.12);transition:transform 1.6s cubic-bezier(.2,.7,.2,1),filter 1.2s}
+.door .shade{position:absolute;inset:-2px;background-size:cover;background-position:50% 40%;transition:transform 1.4s cubic-bezier(.7,0,.2,1),opacity 1.4s}
+.door .num{position:absolute;left:0;right:0;top:20%;text-align:center;font-size:clamp(34px,3.6vw,56px);font-weight:300;color:var(--ink);transition:opacity .8s,transform 1.2s}
+.door .name{display:block;margin-top:16px;text-align:center;font-size:21px;font-style:italic;color:var(--ink2);transition:color .6s}
+.door:hover .pane{transform:translateY(-6px)}
+.door:hover .shade{opacity:.88}
+.door.lit .pane{box-shadow:0 0 0 1px rgba(200,240,214,.35),0 0 60px rgba(150,230,180,.25),0 30px 60px -30px rgba(0,0,0,.8)}
+.door.isopen .shade{transform:translateY(-102%);opacity:.0}
+.door.isopen .num{opacity:0;transform:translateY(-30px)}
+.door.isopen .pane{box-shadow:0 0 70px rgba(150,230,180,.35),0 30px 60px -30px rgba(0,0,0,.8)}
+.door.isopen .pane img{transform:scale(1);filter:saturate(1) brightness(1.05)}
+.door.isopen .name{color:var(--ink)}
+
+/* reserve */
+.queue{min-height:100svh;display:flex;align-items:center}
+.queue .bgimg{background:linear-gradient(180deg,#021805 0%,#052605 38%,#032906 73%,#011905 98%)}
+.queue .veil{background:linear-gradient(90deg,rgba(2,8,5,.35),rgba(2,8,5,.75) 60%,rgba(2,8,5,.9)),linear-gradient(180deg,var(--bg),transparent 22%,transparent 78%,var(--bg))}
+.q-grid{display:grid;grid-template-columns:1fr minmax(320px,520px);gap:6vw;align-items:center;width:100%}
+.queue h2{font-size:clamp(50px,6vw,100px)}
+.roomline{margin-top:28px;font-size:22px;font-style:italic;color:var(--ink2)}
+.form-card{position:relative;padding:30px;border-radius:24px;background:rgba(6,19,10,.24);border:1px solid rgba(165,196,165,.55);box-shadow:inset 1px 1px 0 rgba(255,255,255,.08),inset -1px -1px 0 rgba(0,0,0,.25)}
+.form-card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.07),transparent 38%);pointer-events:none}
+.field{display:block;padding:14px 22px;border-radius:18px;border:1px solid transparent;transition:background .3s,border-color .3s}
+.field:focus-within{background:rgba(25,53,33,.40);border-color:rgba(160,193,160,.7)}
+.field label{display:block;font-family:var(--serif);font-size:16px;opacity:.6;margin-bottom:4px;color:var(--ink)}
+.field input{width:100%;background:none;border:0;border-bottom:1px solid rgba(255,255,255,.22);color:var(--ink);font-family:var(--sans);font-weight:200;font-size:24px;padding:6px 0 10px;outline:none;border-radius:0}
+.go{margin:24px 22px 8px;width:auto;background:none;border:0;padding:10px 0;cursor:pointer;color:var(--ink);font-family:var(--serif);font-size:24px;text-decoration:underline;text-underline-offset:.22em}
+.go:disabled{opacity:.5}
+.err{font-family:var(--sans);font-size:13px;color:#ffd7c2;margin:12px 4px 0}
+.done h3{font-size:44px;margin-bottom:10px}.done p{font-size:21px;color:var(--ink2);margin:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+
+/* ring the bell */
+.foot{padding:18vh 0 8vh;background:radial-gradient(60% 60% at 50% 0%,#0a1d13,var(--bg) 70%)}
+.foot h2{font-size:clamp(50px,6vw,100px);margin-bottom:6vh}
+.acc details{margin-bottom:10px;border-radius:22px;background:rgba(200,228,208,.04);transition:background .4s}
+.acc details[open]{background:rgba(200,228,208,.06)}
+.acc summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:26px 30px;font-size:34px;font-weight:300}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";font-family:var(--sans);font-weight:200;font-size:26px;transition:transform .4s;opacity:.6}
+.acc details[open] summary::after{transform:rotate(45deg)}
+.acc .body{display:grid;grid-template-columns:1fr minmax(320px,560px);gap:5vw;padding:0 30px 30px}
+.acc .pdesc{font-size:22px;font-style:italic;color:var(--ink2);margin:0}
+.acc .glass{background:transparent;box-shadow:none;padding:0}
+.pdone{font-size:21px;color:var(--ink2)}.pdone b{display:block;font-weight:400;font-size:30px;color:var(--ink);margin-bottom:6px}
+.contacts{display:flex;gap:34px;margin-top:9vh}
+.contacts a{opacity:.7}.contacts a:hover{opacity:1}
+.fine{margin-top:8vh;color:var(--ink3)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1.2s cubic-bezier(.2,.7,.2,1),transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* phone */
+@media (max-width:860px){
+  .ask{padding-top:10vh}.ask-card{height:540px}
+  .top nav a:not(.res),.lobby nav a:not(.res){display:none}
+  .lobby .piece{width:88vw;bottom:24%}
+  .lobby .title{flex-direction:column;align-items:flex-start;padding-bottom:6vh}
+  .set-grid,.q-grid,.acc .body,.g2{grid-template-columns:1fr}
+  .set-grid{padding:10vh 0 6vh}
+  .vit{height:62svh}
+  .setsec .veil{background:linear-gradient(180deg,var(--bg),rgba(2,8,5,.55) 30%,rgba(2,8,5,.3) 70%,var(--bg))}
+  .floor{grid-template-columns:repeat(2,1fr);gap:28px 16px}
+  .ask-card,.form-card{padding:34px 24px}
+  .rooms .lead{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.lobby h1 span,.lobby .sub{opacity:1;transform:none;filter:none}}
+
+/* ---------- room scenes: her frames, alive ---------- */
+.scenes{background:#03100a}
+.rooms,.ask,.queue,.setsec,footer{content-visibility:auto;contain-intrinsic-size:auto 100vh}
+.stage.off *{animation-play-state:paused!important}
+.stage{position:relative;width:min(100%,1920px);margin:0 auto;aspect-ratio:1440/900;overflow:hidden;container-type:size}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none;container-type:size}
+.scene.on{opacity:1;pointer-events:auto}
+.scene .base{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fxl,.pc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fx{position:absolute;pointer-events:none}
+.crop{overflow:hidden}
+@keyframes water{from{transform:translateX(-.4%) scaleY(1)}to{transform:translateX(.4%) scaleY(1.012)}}
+.crop.soft{-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+.crop.water{-webkit-mask-image:linear-gradient(180deg,transparent,#000 25%,#000 70%,transparent);mask-image:linear-gradient(180deg,transparent,#000 25%,#000 70%,transparent)}
+.glow{border-radius:50%}
+.beam{inset:0;background:linear-gradient(180deg,rgba(230,245,232,.9),rgba(230,245,232,.15) 75%,transparent);opacity:.75}
+.flick{background:#fff}
+.flash{background:radial-gradient(closest-side,rgba(235,248,255,.55),transparent)}
+.flash svg{width:100%;height:100%;filter:drop-shadow(0 0 6px #fff)}
+.shand{inset:0;width:100%;height:100%;filter:drop-shadow(0 0 4px rgba(190,240,210,.6))}
+.fog{background:radial-gradient(40% 60% at 30% 50%,rgba(200,225,210,.5),transparent 70%),radial-gradient(35% 55% at 75% 45%,rgba(190,215,200,.45),transparent 70%)}
+.iris{border-radius:50%}
+/* the thought inside the picture */
+.thought{position:absolute;inset:0;pointer-events:none}
+.thought::before{content:"";position:absolute;inset:0;background:radial-gradient(75% 65% at 50% 50%,rgba(2,10,6,.72),rgba(2,10,6,.35) 70%,rgba(2,10,6,.1));opacity:0;transition:opacity 1.2s}
+.thought.on::before{opacity:1}.thought.turn::before{opacity:0;transition:opacity 2.4s}
+.voice{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:60cqw;text-align:center;font-family:'Xanh Mono',monospace;font-size:2.6cqw;line-height:1.28;color:#eef4ea;text-shadow:0 0 18px rgba(170,235,195,.35),0 2px 24px rgba(0,0,0,.8);opacity:0;transition:opacity .8s}
+.thought.on .voice{opacity:1}
+.voice p{margin:0 0 .25em}.voice span{display:inline-block;white-space:pre}
+.land{border-radius:50%;background:radial-gradient(closest-side,rgba(235,255,240,.9),rgba(170,240,200,.35) 35%,transparent 70%);}
+.end{position:absolute;margin:0;font-family:'Xanh Mono',monospace;font-size:1.6cqw;line-height:1.2;color:#eef4ea;white-space:nowrap;text-shadow:0 0 14px rgba(170,235,195,.25)}
+.end span{display:inline-block;white-space:pre}
+.mine{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);margin:0;min-width:1ch;max-width:60cqw;text-align:center;font-family:'Xanh Mono',monospace;font-size:2.6cqw;line-height:1.28;color:#eef4ea;text-shadow:0 0 18px rgba(170,235,195,.35),0 2px 24px rgba(0,0,0,.8);outline:none;caret-color:transparent;pointer-events:none;animation:mineIn 1.2s ease both}
+@keyframes caret{50%{opacity:0}}@keyframes mineIn{from{opacity:0}}
+.hot{position:absolute;background:none;border:0;padding:0;cursor:pointer;border-radius:10px;z-index:5}
+.hot:focus-visible{outline:1px solid #a5c4a5}
+.hot.prev,.hot.next{top:88.5%;width:24%;height:9%;display:flex;align-items:center;gap:1.1cqw;color:#e8efe6;font-family:'Xanh Mono',monospace;font-size:1.3cqw;transition:opacity .3s;opacity:.85}
+.hot.prev{left:3.5%;text-align:left}.hot.next{right:3.5%;justify-content:flex-end;text-align:right}
+.hot.prev:hover,.hot.next:hover{opacity:1}
+.hot .k{display:block;font-family:'Helvetica Neue',Helvetica,sans-serif;font-weight:300;font-size:.72cqw;letter-spacing:.14em;text-transform:uppercase;opacity:.55;margin-bottom:.35em}
+.hot .ar{font-size:1.9cqw;line-height:1}
+.hot.all{display:none}
+.stage::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(180deg,transparent,rgba(3,12,7,.78));pointer-events:none;z-index:3}
+.stitle{position:absolute;left:6.5%;top:11%;margin:0;z-index:4;font-family:'Xanh Mono',monospace;font-weight:400;font-size:5cqw;line-height:1;color:#eef2ea;text-shadow:0 2px 30px rgba(0,0,0,.45);pointer-events:none;transition:opacity .5s}
+.stage.typing .stitle{opacity:.25}
+.dots{position:absolute;left:32%;top:90.5%;width:36%;height:6%;display:grid;grid-template-columns:repeat(10,1fr);z-index:5}
+.dots button{background:none;border:0;cursor:pointer;padding:0;color:rgba(232,239,230,.42);font-family:'Xanh Mono',monospace;font-size:1.2cqw;transition:color .3s}
+.dots button span{border-bottom:1px solid transparent;padding-bottom:.25em}
+.dots button:hover{color:#eef4ea}.dots button.on{color:#eef4ea}.dots button.on span{border-bottom-color:#eef4ea}
+
+.it{font-style:normal!important}
+</style>
+</head>
+<body>
+
+<header class="top" id="top"><div class="wrap"><a class="mark" href="#lobby">VOIZEX</a><nav class="cap"><a href="#set">The set</a><a href="#rooms">Rooms</a><a href="#scenes">Inside</a><a class="res" href="#queue">Reserve</a></nav></div></header>
+<main>
+<section class="lobby hall grain" id="lobby" style="--img-lobby:url(/n/macro.jpg)">
+  <div class="bgimg"></div><div class="veil"></div>
+  <div class="wrap head"><a class="mark" href="#lobby">VOIZEX</a><nav class="cap"><a href="#set">The set</a><a href="#rooms">Rooms</a><a href="#scenes">Inside</a><a class="res" href="#queue">Reserve</a></nav></div>
+  
+  <div class="wrap title"><h1><span>Think it.</span><span>It happens.</span></h1>
+    <a class="cta cap" href="#queue">Reserve my room</a></div>
+</section>
+
+<section class="setsec hall grain" id="set" style="--img-stage:url(/n/halls/stage.jpg)"><div class="bgimg"></div><div class="veil"></div>
+  <div class="wrap set-grid">
+    <div class="set-copy rv">
+      <div class="tabs cap" role="group" aria-label="Choose what to look at">
+        <button class="tab" type="button" data-view="set" aria-pressed="true">The set</button><button class="tab" type="button" data-view="necklace" aria-pressed="false">Necklace</button><button class="tab" type="button" data-view="clip" aria-pressed="false">Ear clip</button><button class="tab" type="button" data-view="case" aria-pressed="false">Case</button>
+      </div>
+      <div class="ring" id="ring"><div class="in" aria-live="polite"><span class="spec cap" id="vSpec">Titanium, gold, platinum</span><h2 id="vTitle">The set</h2><p id="vText">A necklace, an ear clip and a smart case. The thought signal shows inner speech travelling from the neck sensors into the case and coming out as text.</p></div></div>
+    </div>
+    <div class="vit" id="vitrine"><div class="spin" tabindex="0" aria-label="The VOIZEX set. Drag to turn it, pinch or use the buttons to zoom."><img alt=""></div>
+      <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
+      <span class="v3dhint cap">Drag to turn</span><p id="v3dNote"></p></div>
+  </div>
+</section>
+
+<section class="mind" id="mind" aria-label="How VOIZEX works">
+  <div class="breath" aria-hidden="true"><i></i></div>
+  <div class="mv" id="mindBox"><video id="mindV" muted playsinline preload="auto" src="n/think/think.mp4"></video><div class="edge"></div></div>
+  <div class="mind-copy" id="mindCopy">
+    <p data-at="6.6">Most thoughts never leave your head.</p>
+    <p data-at="8.4">VOIZEX hears the words you say silently. Sensors at the neck read them before a sound is made.</p>
+    <p data-at="11">Then it gives them form. Agents and smart systems turn a thought into a script, a booking, a message sent.</p>
+  </div>
+</section>
+
+<section class="ask hall grain" id="ask" style="--img-wall:url(/n/halls/wall.jpg)"><div class="bgimg"></div><canvas class="net" id="askNet" aria-hidden="true"></canvas><div class="veil"></div>
+  <div class="wrap"><div class="ask-card rv"><div class="cap"><span></span><span id="qcount">1 / 5</span></div>
+    <h2 id="qh">When do your best thoughts come?</h2><div id="qsteps" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="qbody" id="qbody"></div></div></div>
+</section>
+
+<section class="rooms" id="rooms"><div class="wrap">
+  <div class="lead"><h2 class="rv">Every thought<br><span class="it">has a room.</span></h2></div>
+  <div class="floor" id="floor"></div>
+</div></section>
+
+<section class="scenes" id="scenes" aria-label="Rooms"><div class="stage" id="stage">
+  <div class="slides" id="slides"></div>
+  <h3 class="stitle" id="sTitle" aria-live="polite"></h3>
+  <button class="hot prev" type="button" id="sPrev" aria-label="Previous room"></button>
+  <button class="hot next" type="button" id="sNext" aria-label="Next room"></button>
+  <button class="hot all" type="button" id="sAll" aria-label="All rooms"></button>
+  <div class="dots" id="sDots"></div>
+</div></section>
+
+<section class="queue hall grain" id="queue" style="--img-theatre:url(/n/halls/theatre.jpg)"><div class="bgimg"></div><div class="veil"></div>
+  <div class="wrap q-grid">
+    <div class="rv"><h2>Reserve<br><span class="it">your room.</span></h2><p class="roomline" id="myRoom" hidden></p></div>
+    <div class="form-card rv">
+      <form id="wl" novalidate>
+        <div class="field"><label class="cap" for="wlName">Full name</label><input id="wlName" name="name" autocomplete="name" required></div>
+        <div class="field"><label class="cap" for="wlEmail">Email</label><input id="wlEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label class="cap" for="wlCo">Field</label><input id="wlCo" name="company" autocomplete="organization-title"></div>
+        <div class="field"><label class="cap" for="wlWeb">Website</label><input id="wlWeb" name="website" type="url" inputmode="url" autocomplete="url"></div>
+        <button class="go" type="submit" id="wlSubmit">Reserve my room</button>
+        <p class="err" id="wlError" hidden></p>
+      </form>
+      <div class="done" id="wlDone" hidden><h3>Thank you.</h3><p>We will be in touch.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot" id="bell"><div class="wrap px">
+  <h2 class="rv">Ring the bell.</h2>
+  <div class="acc">
+    <details><summary>Partnership</summary><div class="body">
+      <p class="pdesc">VOIZEX is open to collaborations.</p>
+      <div class="glass"><form id="pForm" class="xform" data-kind="partner" novalidate><div class="g2">
+        <div class="field"><label class="cap" for="pName">Full name</label><input id="pName" autocomplete="name" required></div><div class="field"><label class="cap" for="pEmail">Email</label><input id="pEmail" type="email" autocomplete="email" required></div><div class="field"><label class="cap" for="pField">Field</label><input id="pField" autocomplete="organization-title" required></div><div class="field"><label class="cap" for="pWeb">Website</label><input id="pWeb" type="url" autocomplete="url"></div></div>
+        <button class="go cap" type="submit">Send</button></form>
+      <p class="err" hidden></p><p class="pdone" hidden></p></div>
+    </div></details>
+    <details><summary>Investors</summary><div class="body">
+      <p class="pdesc">VOIZEX as an investment opportunity.</p>
+      <div class="glass"><form id="iForm" class="xform" data-kind="investor" novalidate><div class="g2">
+        <div class="field"><label class="cap" for="iName">Full name</label><input id="iName" autocomplete="name" required></div><div class="field"><label class="cap" for="iEmail">Email</label><input id="iEmail" type="email" autocomplete="email" required></div><div class="field"><label class="cap" for="iWa">WhatsApp</label><input id="iWa" type="tel" autocomplete="tel" required></div><div class="field"><label class="cap" for="iWeb">Website</label><input id="iWeb" type="url" autocomplete="url"></div><div class="field"><label class="cap" for="iRole">Role</label><input id="iRole" autocomplete="organization-title"></div></div>
+        <button class="go cap" type="submit">Request the deck</button></form>
+      <p class="err" hidden></p><p class="pdone" hidden></p></div>
+    </div></details>
+  </div>
+  <div class="contacts cap"><a href="https://wa.me/971585259461" target="_blank" rel="noopener">WhatsApp</a><a href="mailto:wriwers@outlook.com">Email</a><a href="https://linkedin.com/in/wriwers" target="_blank" rel="noopener">LinkedIn</a></div>
+  <p class="fine cap">VOIZEX. Think it. It happens. © 2026</p>
+</div></footer>
+
+<script>
+/* ---------- lobby: dust drifting in the beam ---------- */
+(()=>{const c=document.getElementById('dust');if(!c||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const g=c.getContext('2d');let P=[],vis=true;
+ const fit=()=>{c.width=c.clientWidth;c.height=c.clientHeight;P=Array.from({length:70},()=>({x:c.width*(.38+Math.random()*.24),y:Math.random()*c.height,r:.4+Math.random()*1.4,v:4+Math.random()*10,p:Math.random()*6}))};fit();addEventListener('resize',fit);
+ new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(vis)requestAnimationFrame(f)}).observe(c);let last=performance.now();
+ function f(now){if(!vis)return;const dt=Math.min(.05,(now-last)/1000);last=now;g.clearRect(0,0,c.width,c.height);for(const d of P){d.y+=d.v*dt;d.x+=Math.sin(now/1800+d.p)*.15;d.p+=dt;if(d.y>c.height)d.y=0;g.globalAlpha=.15+.35*Math.abs(Math.sin(d.p));g.fillStyle='#e8f5ea';g.beginPath();g.arc(d.x,d.y,d.r,0,7);g.fill()}requestAnimationFrame(f)}requestAnimationFrame(f)})();
+
+/* ---------- main ---------- */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* top bar after the hero */
+const top=$('#top');const stick=()=>top.classList.toggle('on',scrollY>innerHeight*.6);addEventListener('scroll',stick,{passive:true});stick();
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+$$('.rv').forEach(el=>io.observe(el));
+
+/* the set: tabs switch render and text */
+const VIEWS0={
+ set:{spec:'Titanium, gold, platinum',title:'The set',text:'A necklace, an ear clip and a smart case. The thought signal shows inner speech travelling from the neck sensors into the case and coming out as text.'},
+ necklace:{spec:'EMG sensors, mic, speaker',title:'The necklace',text:'Sensors on the inside rest against the throat and pick up the muscle signals of the words you think. Brushed titanium outside, a soft mesh band inside.'},
+ clip:{spec:'Bone conduction, air mic',title:'The ear clip',text:'Reads your draft back to you through bone conduction, so only you hear it and your ear stays open to the room.'},
+ case:{spec:'Charging, UV-C, on-device AI',title:'The case',text:'Charges and cleans the pieces overnight and runs the recognition model locally. Your inner speech never leaves the set.'}};
+const VIEWS=VIEWS0;const ring=$('#ring');let view='set',auto=null;
+function choose(v,user,fromModel){if(v===view)return;view=v;$$('.tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
+ if(!fromModel&&window.__v3dChoose)window.__v3dChoose(v);
+ ring.classList.add('swap');setTimeout(()=>{const d=VIEWS[v];$('#vSpec').textContent=d.spec;$('#vTitle').textContent=d.title;$('#vText').textContent=d.text;ring.classList.remove('swap');drawConnect()},reduce?0:420);
+ if(user){clearInterval(auto);auto=null}}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.view,true)));
+window.__setView=v=>choose(v,true,true);
+$('#zin').addEventListener('click',()=>window.__v3dZoom&&window.__v3dZoom(.82));$('#zout').addEventListener('click',()=>window.__v3dZoom&&window.__v3dZoom(1.2));
+/* thin lines from the active tab down to the ring, as in the layout */
+function drawConnect(){return;const sv=$('#connect');if(!sv)return;const host=sv.parentNode.getBoundingClientRect();
+ const t=$(`.tab[data-view="${view}"]`).getBoundingClientRect(),r=ring.getBoundingClientRect();
+ sv.setAttribute('viewBox',`0 0 ${host.width} ${host.height}`);
+ const x=t.left+t.width/2-host.left,y=t.bottom-host.top+8,cx=r.left+r.width/2-host.left,cy=r.top-host.top;
+ const ang=Math.asin(Math.max(-1,Math.min(1,(x-cx)/(r.width/2))));const ex=cx+Math.sin(ang)*r.width/2,ey=cy+r.height/2-Math.cos(ang)*r.height/2;
+ sv.innerHTML=`<path d="M${x} ${y} V${Math.max(y,ey-4)}" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s forwards"/><circle cx="${x}" cy="${Math.max(y,ey-4)}" r="2.5" fill="#fff"/>`;}
+const st=document.createElement('style');st.textContent='@keyframes draw{to{stroke-dashoffset:0}}';document.head.appendChild(st);
+
+
+/* rooms */
+const ROOMS={
+'34':{name:'Dreams',voice:['I was late for a train, but it waited.','My mother was there, younger.','Nobody spoke.'],
+ writes:['DREAM № 34','Scene one. The platform at night.','Scene two. The train that waited.','Scene three. A silence everyone understood.'],
+ obj:()=>`<div class="glass ob"><span class="ob-k">Dream № 34</span><span class="ob-d">${today()}</span><ol><li>The platform</li><li>The waiting train</li><li>The silence</li></ol></div>`},
+'35':{name:'Cinema',voice:['A woman arrives at a hotel','where they have waited for her','for forty years.'],
+ writes:['SETUP. A woman checks in. The clerk already knows her name.','TURN. Her room has been kept since 1985.','ENDING. She finally unpacks.','INT. HOTEL LOBBY - NIGHT. Every clock shows a different hour.'],
+ obj:()=>`<div class="glass ob frames"><div class="fr"><svg viewBox="0 0 160 90"><path class="sb" d="M52 76 V46 A28 28 0 0 1 108 46 V76 M0 76 H160"/><circle class="sbf" cx="30" cy="60" r="3"/><path class="sb" d="M30 64 V76"/></svg><span>Wide</span></div><div class="fr"><svg viewBox="0 0 160 90"><rect class="sb" x="54" y="20" width="52" height="56" rx="2"/><path class="sb" d="M64 34 H96 M64 46 H96 M64 58 H86"/></svg><span>The register</span></div><div class="fr"><svg viewBox="0 0 160 90"><ellipse class="sb" cx="80" cy="54" rx="20" ry="24"/><path class="sb" d="M70 50 q4 3 8 0 M82 50 q4 3 8 0 M72 64 q8 4 16 0"/></svg><span>Close-up</span></div></div>`},
+'36':{name:'Melody',voice:['Something like night, the road,','I am not alone.','Slow.'],
+ writes:['NOT ALONE, 72 bpm','Night on the road, the lights go by,','I count them slow, I am not alone.','Chorus: not alone, not alone tonight.'],
+ obj:()=>`<div class="glass ob sleeve"><div class="disc"></div><div class="sl"><b>Not Alone</b><span>Side A, 72 bpm</span></div></div>`},
+'37':{name:'Words',voice:['I always wanted to write','about my grandmother’s house.','The smell of the stairs.'],
+ writes:['CHAPTER ONE','The stairs in my grandmother’s house smelled of apples and cold stone.','Nobody else remembers it. I do.'],
+ obj:()=>`<div class="glass ob book"><span class="bt">The Stairs</span><span class="bf">“The stairs smelled of apples and cold stone.”</span></div>`},
+'38':{name:'Atmosphere',voice:['Quieter.','Warmer.','Something from childhood.'],
+ writes:['LIGHT 2700K, 30%','COLOUR amber','MUSIC a slow piano','The room is ready.'],
+ obj:()=>`<div class="glass ob win38"><svg viewBox="0 0 240 200" aria-hidden="true"><defs><linearGradient id="lt38" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="l1"/><stop offset="1" class="l2"/></linearGradient></defs><rect x="40" y="20" width="160" height="150" rx="4" fill="url(#lt38)"/><path d="M120 20 V170 M40 95 H200" stroke="#06130b" stroke-width="5"/><rect x="40" y="20" width="160" height="150" rx="4" fill="none" stroke="#a5c4a5" stroke-width="3"/><path d="M14 12 Q34 90 22 186 H48 Q40 90 50 12Z" fill="#1f4a2f"/><path d="M226 12 Q206 90 218 186 H192 Q200 90 190 12Z" fill="#1f4a2f"/><rect x="10" y="6" width="220" height="6" rx="3" fill="#a5c4a5"/></svg><span class="np">Now playing: a slow piano</span></div>`},
+'39':{name:'Desire',voice:['I want the spa.','Tonight.','Without anyone around.'],
+ writes:['To the concierge, room 39:','Spa tonight, quiet, alone.','Confirmed for 19:00.'],
+ obj:()=>`<div class="glass ob"><span class="ob-k">From the concierge</span><p>Spa, 19:00.<br>The room is yours alone.</p><span class="ob-d">Room 39</span></div>`},
+'40':{name:'Time',voice:['Something Italian.','By the water.','Not loud.'],
+ writes:['Three places by the water.','Quiet, Italian, a view.','The best one is booked for you.'],
+ obj:()=>`<div class="glass ob"><span class="ob-k">Reservation</span><p>Table for two, 20:30,<br>by the window.</p><span class="ob-d">Room 40</span></div>`},
+'41':{name:'Journey',voice:['Paris.','In spring.'],
+ writes:['DXB to CDG','April, morning flight.','Window seat.'],
+ obj:()=>`<div class="glass ob pass"><div><span class="ob-k">Boarding pass</span><b>DXB <i>to</i> CDG</b><span class="ob-d">April, 08:40</span></div><div class="seat"><span class="ob-k">Seat</span><b>34A</b></div></div>`},
+'42':{name:'Silence',voice:['Tell him I am here.','He doesn’t need to answer.'],
+ writes:['To: the one you thought of','“I am here.”','Delivered without a sound.'],
+ obj:()=>`<div class="env42"><svg viewBox="0 0 300 200" aria-hidden="true"><rect x="6" y="6" width="288" height="188" rx="10" fill="rgba(18,46,30,.85)" stroke="#a5c4a5" stroke-width="1.2"/><path d="M6 14 L150 110 L294 14" fill="rgba(6,19,11,.6)" stroke="#a5c4a5" stroke-width="1.2"/><circle cx="150" cy="108" r="20" fill="#64a777"/><circle cx="150" cy="108" r="12" fill="none" stroke="#e4f0de" stroke-width="1.5"/><text x="36" y="164" font-family="Xanh Mono,monospace" font-size="15" fill="#e4f0de">To: the one you thought of</text></svg><span class="stamp">Delivered in silence</span></div>`},
+'43':{name:'The Unconscious',voice:['Not now.','Later.','I won’t make it.','Not now.'],
+ writes:['You said “not now” three times today.','You said “later” once.','What are you waiting for?'],
+ obj:()=>`<div class="glass ob"><span class="ob-k">Profile</span><ul><li>“Not now”, 3</li><li>“Later”, 1</li><li>“I won’t make it”, 1</li></ul></div>`}
+};
+const today=()=>new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long'});
+const PRE={sleep:'Before sleep it came again.',road:'On the way here I thought:',shower:'In the shower, again:',talk:'In the middle of a sentence I thought:'};
+const POST={fades:'And by morning it will be gone.',notes:'I’ll put it in my notes. Again.',stop:'I will start it again, and stop.',made:'This time I’ll make it real.'};
+const MOOD={calmer:['Quieter.','Slower.','Nobody needs me now.'],warmer:['Quieter.','Warmer.','Something from childhood.'],brighter:['More light.','I want to wake up.','Something with a rhythm.']};
+const QUIZ=[
+{k:'when',q:'When do your best thoughts come?',a:[['sleep','Before sleep'],['shower','In the shower'],['road','On the road'],['talk','In the conversation']]},
+{k:'fate',q:'What usually happens to them?',a:[['fades','They fade by morning'],['notes','They wait in my notes'],['stop','I start, then stop'],['made','I make them real']]},
+{k:'want',q:'What does your thought want?',a:[['become','To become something'],['space','To change the space around me'],['true','To come true by itself'],['words','To be understood without words']]},
+{k:'room',q:{become:'What should it become?',space:'How should the space feel?',true:'What should come true?',words:'Understood by whom?'},a:{
+ become:[['35','A film'],['36','A song'],['37','A book'],['34','Something I dreamed']],
+ space:[['38:calmer','Calmer'],['38:warmer','Warmer'],['38:brighter','Brighter'],['42','Silent']],
+ true:[['39','A place to rest'],['40','A table somewhere'],['41','A city far away'],['34','A dream I keep having']],
+ words:[['42','By someone close'],['43','By myself'],['37','By someone far away'],['35','By everyone']]}},
+{k:'how',q:'How should it happen?',a:[['all','All at once'],['step','Step by step, with me'],['private','So that no one sees'],['ready','When I am ready']]}];
+
+const ans={},qb=$('#qbody'),qh=$('#qh'),qs=$$('#qsteps i');let myRoom=null,mood=null,autoT=0;
+const anim=()=>{qb.classList.remove('step-in');void qb.offsetWidth;qb.classList.add('step-in')};
+function step(n){qs.forEach((k,i)=>k.classList.toggle('on',i<=n));$('#qcount').textContent=`${n+1} / ${QUIZ.length}`;const s=QUIZ[n];const q=typeof s.q==='string'?s.q:s.q[ans.want];const a=Array.isArray(s.a)?s.a:s.a[ans.want];
+ qh.textContent=q;qb.innerHTML=`<div class="opts">${a.map(([v,t],i)=>`<button class="opt${i===0&&n===0?' pick':''}" type="button" data-k="${s.k}" data-v="${v}">${esc(t)}</button>`).join('')}</div>`;anim();
+ const first=qb.querySelector('.opt.pick');if(first)qb.addEventListener('pointerover',()=>first.classList.remove('pick'),{once:true})}
+function result(){qs.forEach(k=>k.classList.add('on'));$('#qcount').textContent='Your room';const [no,m]=ans.room.split(':');myRoom=no;mood=m||null;const R=ROOMS[no];
+ qh.textContent='Your room is ready.';
+ qb.innerHTML=`<button class="keytag" type="button" id="qkey" aria-label="Open room ${no}"><span class="kh-ring"></span><span class="kn">${no}</span><span class="kname">${esc(R.name)}</span></button><div class="kacts"><button class="ulink" type="button" id="qr">Start over</button><button class="ulink" type="button" id="qgo">Go to my room</button></div>`;anim();
+markFloor();$('#myRoom').textContent=`Your room: ${no}, ${R.name}`;$('#myRoom').hidden=false;load(no)}
+qb.addEventListener('click',e=>{const b=e.target.closest('.opt');if(b){ans[b.dataset.k]=b.dataset.v;const n=QUIZ.findIndex(s=>s.k===b.dataset.k);n<QUIZ.length-1?step(n+1):result();return}
+ if(e.target.closest('#qr')){for(const k in ans)delete ans[k];myRoom=null;mood=null;$('#myRoom').hidden=true;markFloor();step(0);return}
+ if(e.target.closest('#qkey')||e.target.closest('#qgo')){const d=floor.querySelector(`.door[data-no="${myRoom}"]`);d.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});clearTimeout(autoT);autoT=setTimeout(()=>showRoom(myRoom),reduce?0:900)}});
+step(0);
+
+/* floor of doors: each door is a slit of its own room behind a veil; only one stands open */
+const floor=$('#floor');const ready=Promise.resolve();
+const FOCAL={'34':69,'35':50,'36':30,'37':62,'38':49,'39':50,'40':65,'41':40,'42':65,'43':51};
+const sceneSrc=no=>(typeof SCENE_IMG!=='undefined'?SCENE_IMG[no]:`/n/scenes/${no}.jpg`);
+const doorSrc=no=>(typeof DOOR_IMG!=='undefined'?DOOR_IMG[no]:`/n/doors/${no}.jpg`);
+const doorBlur=no=>(typeof DOORB_IMG!=='undefined'?DOORB_IMG[no]:`/n/doors/${no}_b.jpg`);
+floor.innerHTML=Object.entries(ROOMS).map(([no,R],i)=>`<div class="door rv" style="transition-delay:${(i%5)*90}ms" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><div class="pane"><img src="${doorSrc(no)}" alt="" loading="lazy"><div class="shade" style="background-image:linear-gradient(180deg,rgba(4,14,9,.55),rgba(3,10,7,.94)),url(${doorBlur(no)})"></div><span class="num">${no}</span></div><span class="name">${esc(R.name)}</span></div>`).join('');
+$$('.door.rv',floor).forEach(el=>io.observe(el));
+const opened=new Set();
+function closeDoor(no){opened.delete(no);const d=floor.querySelector(`.door[data-no="${no}"]`);d&&d.classList.remove('isopen')}
+function openDoor(no){if(opened.has(no))return;[...opened].forEach(closeDoor);opened.add(no);const d=floor.querySelector(`.door[data-no="${no}"]`);d&&d.classList.add('isopen')}
+function markFloor(){$$('.door',floor).forEach(d=>d.classList.toggle('lit',d.dataset.no===myRoom));if(myRoom)armRoom(myRoom)}
+let armed=null;function armRoom(no){armed=no;tryArm()}
+function tryArm(){if(!armed)return;const r=floor.getBoundingClientRect();if(r.top<innerHeight*.8&&r.bottom>innerHeight*.2){const no=armed;armed=null;setTimeout(()=>openDoor(no),3000)}}
+addEventListener('scroll',tryArm,{passive:true});
+function showRoom(no){const d=floor.querySelector(`.door[data-no="${no}"]`);if(d){d.classList.add('lit')}}
+const tap=d=>{clearTimeout(autoT);const no=d.dataset.no;if(!opened.has(no)){openDoor(no);showScene(no)}else showScene(no,true)};
+floor.addEventListener('click',e=>{const d=e.target.closest('.door');if(d)tap(d)});
+floor.addEventListener('keydown',e=>{const d=e.target.closest('.door');if(d&&(e.key==='Enter'||e.key===' ')&&e.target===d){e.preventDefault();tap(d)}});
+
+/* scenes */
+const SIMG=(typeof SCENE_IMG!=='undefined')?SCENE_IMG:null;
+/* ---------- room scenes: her frames from Figma, brought to life in place.
+   Everything moves inside the picture: parts of the frame itself are lifted out and breathe (float, turn, tick, reach),
+   light, dust, water and small magic are drawn on top. Then the room's inner voice is typed in and its outcome appears. ---------- */
+const SC=Object.keys(ROOMS);let sc=null;
+const X=v=>(v/14.4)+'%',Y=v=>(v/9)+'%';
+/* coordinates are in the 1440×900 space of her frames */
+const FX={
+'34':[{t:'glow',cx:1128,cy:268,r:230,c:'230,240,215',dur:5,min:.25,max:.6},{t:'dust',x:300,y:20,w:1100,h:300,n:36,kind:'star'},{t:'fog',y:560,h:300,op:.22},{t:'glow',cx:1000,cy:560,r:70,c:'255,225,170',dur:2.2,min:.2,max:.7}],
+'35':[{t:'beam',poly:[[1440,200],[1440,330],[640,560],[560,420]],min:.04,max:.12,flicker:1},{t:'dust',x:600,y:150,w:840,h:420,n:46},{t:'glow',cx:1180,cy:306,r:170,c:'255,220,160',dur:3,min:.2,max:.55}],
+'36':[{t:'glow',cx:1008,cy:460,r:180,c:'240,215,160',dur:4,min:.15,max:.45},{t:'notes',from:[1008,420],to:[1120,70]},{t:'dust',x:950,y:0,w:300,h:500,n:22}],
+'37':[{t:'beam',poly:[[1100,0],[1300,0],[1260,700],[1060,700]],min:.05,max:.12},{t:'dust',x:1000,y:0,w:360,h:700,n:30},{t:'dust',x:960,y:250,w:360,h:380,n:14,kind:'rise'},{t:'glow',cx:1080,cy:560,r:160,c:'255,235,190',dur:4.5,min:.15,max:.4}],
+'38':[{t:'beam',poly:[[1040,0],[1170,0],[1190,760],[1000,760]],min:.06,max:.14},{t:'flash',cx:1080,cy:450,r:70},{t:'dust',x:1050,y:420,w:60,h:90,n:12,kind:'rain'},{t:'dust',x:960,y:40,w:260,h:600,n:18}],
+'39':[{t:'glow',cx:710,cy:300,r:120,c:'200,240,220',dur:3.4,min:.2,max:.6},{t:'glow',cx:720,cy:700,r:420,c:'255,215,150',dur:4,min:.12,max:.35},{t:'dust',x:620,y:120,w:200,h:300,n:14,kind:'star'}],
+'40':[{t:'glow',cx:984,cy:594,r:60,c:'255,215,150',dur:1.6,min:.35,max:.9},{t:'glow',cx:1142,cy:378,r:200,c:'255,235,190',dur:5,min:.12,max:.35},{t:'dust',x:900,y:0,w:500,h:600,n:24}],
+'41':[{t:'water',y:560,h:340},{t:'fog',y:380,h:240,op:.25},{t:'glow',cx:1128,cy:210,r:110,c:'255,230,170',dur:3.5,min:.3,max:.8},{t:'dust',x:960,y:120,w:360,h:360,n:16,kind:'rise'}],
+'42':[{t:'rings',cx:1087,cy:520},{t:'glow',cx:1087,cy:520,r:170,c:'230,235,210',dur:5,min:.12,max:.4},{t:'dust',x:0,y:0,w:700,h:600,n:26}],
+'43':[{t:'glow',cx:1046,cy:378,r:180,c:'120,230,190',dur:3.5,min:.25,max:.7},{t:'glow',cx:1027,cy:224,r:110,c:'180,250,220',dur:2.6,min:.2,max:.6},{t:'dust',x:880,y:60,w:340,h:600,n:24,kind:'star'},{t:'fog',y:640,h:220,op:.18}]
+};
+/* what the room does with the thought — her old «Just imagine» texts, now inside the picture */
+ROOMS['40']={name:'Time',voice:['Eleven things before eight.','I won’t make it.','Not all of them.'],writes:[],obj:()=>''};
+ROOMS['39'].voice=['Tonight.','The front row.','Before the curtain rises.'];
+ROOMS['41'].voice=['Somewhere green and old.','Cliffs, and the stories about them.','Where the road ends in fog.'];
+ROOMS['42'].voice=['Not a word.','Just let them know.','I’m still here.'];
+ROOMS['43'].voice=['Not now.','Later.','Maybe tomorrow.','Not now.'];
+/* the culmination: where the words flow to, and the one line that stays */
+const END={
+'34':{f:[1128,268],at:[94,712],line:'Written down before morning.'},
+'35':{f:[1180,306],at:[94,712],line:'Scene one is already cut.'},
+'36':{f:[1008,460],at:[94,712],line:'Now it has a melody. 72 bpm.'},
+'37':{f:[1080,560],at:[94,712],line:'The first page exists.'},
+'38':{f:[1080,440],at:[94,712],line:'The room turned warm.'},
+'39':{f:[710,300],at:[94,712],line:'Front row, 19:00. The curtain waits for you.'},
+'40':{f:[1142,378],at:[94,712],line:'All eleven done by 19:58. Two minutes to spare.'},
+'41':{f:[1128,230],at:[94,712],line:'Ireland. The cliffs at dawn — the road is yours.'},
+'42':{f:[1087,520],at:[94,712],line:'Delivered. Without a sound.'},
+'43':{f:[1046,378],at:[94,712],line:'“Not now”, three times today. What are you waiting for?'}
+};
+
+/* where the outcome settles in each picture, clear of her text and figures */
+const DOCK={'34':[50,73],'35':[50,79],'36':[50,73],'37':[19,72],'38':[84,73],'39':[16,66],'40':[82,78],'41':[81,71],'42':[50,79],'43':[56,83]};
+const stageEl=$('#stage'),slides=$('#slides');
+slides.innerHTML=SC.map(no=>`<div class="scene" data-no="${no}"><img class="base" src="${SIMG?SIMG[no]:`/n/scenes/${no}.jpg`}" alt="Room ${no}, ${esc(ROOMS[no].name)}" decoding="async"><div class="fxl"></div><canvas class="pc"></canvas><div class="thought" aria-live="polite"></div></div>`).join('');
+$('#sDots').innerHTML=SC.map(no=>`<button type="button" data-no="${no}" aria-label="Room ${no}"><span>${no}</span></button>`).join('');
+function navUpdate(no){const i=SC.indexOf(no),p=SC[(i-1+SC.length)%SC.length],n=SC[(i+1)%SC.length];$('#sTitle').textContent=ROOMS[no].name;$('#sPrev').innerHTML=`<span class="ar">←</span><span><span class="k">Previous room</span>${p} — ${esc(ROOMS[p].name)}</span>`;$('#sNext').innerHTML=`<span><span class="k">Next room</span>${n} — ${esc(ROOMS[n].name)}</span><span class="ar">→</span>`}
+const imgOf=no=>SIMG?SIMG[no]:`/n/scenes/${no}.jpg`;
+const sceneEl=no=>slides.querySelector(`.scene[data-no="${no}"]`);
+const EZ='cubic-bezier(.45,0,.55,1)';
+function box(el,x,y,w,h){el.style.left=X(x);el.style.top=Y(y);el.style.width=X(w);el.style.height=Y(h)}
+function crop(no,x,y,w,h,mode){const d=document.createElement('div');d.className='fx crop';box(d,x,y,w,h);
+ const im=new Image();im.src=imgOf(no);im.alt='';im.style.cssText=`position:absolute;max-width:none;width:${1440/w*100}%;height:${900/h*100}%;left:${-x/w*100}%;top:${-y/h*100}%`;d.appendChild(im);
+ if(mode==='round')d.style.clipPath='circle(50% at 50% 50%)';else d.classList.add('soft');return d}
+function build(no){const s=sceneEl(no);if(s.dataset.built)return;s.dataset.built=1;const L=s.querySelector('.fxl'),parts=[];
+ for(const f of FX[no]||[]){let el;
+  if(f.t==='float'){el=crop(no,f.x,f.y,f.w,f.h);el.animate([{transform:'translateY(0) rotate(0)'},{transform:`translateY(${-f.amp/9}cqh) rotate(${f.rot||0}deg)`}],{duration:f.dur*1000,iterations:Infinity,direction:'alternate',easing:EZ})}
+  else if(f.t==='reach'){el=crop(no,f.x,f.y,f.w,f.h);el.animate([{transform:'translate(0,0)'},{transform:`translate(${f.dx/14.4}cqw,${f.dy/9}cqh)`}],{duration:f.dur*1000,iterations:Infinity,direction:'alternate',easing:EZ})}
+  else if(f.t==='sway'){el=crop(no,f.x,f.y,f.w,f.h);el.style.transformOrigin=`${f.ox}% ${f.oy}%`;el.animate([{transform:`rotate(${-f.deg}deg)`},{transform:`rotate(${f.deg}deg)`}],{duration:f.dur*1000,iterations:Infinity,direction:'alternate',easing:EZ})}
+  else if(f.t==='spin'){el=crop(no,f.cx-f.r,f.cy-f.r,f.r*2,f.r*2,'round');el.animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:f.dur*1000,iterations:Infinity})}
+  else if(f.t==='tick'){el=crop(no,f.cx-f.r,f.cy-f.r,f.r*2,f.r*2,'round');const k=[];for(let i=0;i<=8;i++)k.push({transform:`rotate(${i%2?.5:0}deg)`,offset:i/8,easing:'steps(1,end)'});el.animate(k,{duration:8000,iterations:Infinity})}
+  else if(f.t==='iris'){el=crop(no,f.cx-f.r,f.cy-f.r,f.r*2,f.r*2,'round');el.classList.add('iris');el.animate([{scale:1},{scale:1.05}],{duration:3200,iterations:Infinity,direction:'alternate',easing:EZ});parts.push({look:el})}
+  else if(f.t==='glow'){el=document.createElement('div');el.className='fx glow';box(el,f.cx-f.r,f.cy-f.r,f.r*2,f.r*2);el.style.background=`radial-gradient(closest-side,rgba(${f.c},.55),rgba(${f.c},0))`;
+   el.animate([{opacity:f.min??.35},{opacity:f.max??.85}],{duration:f.dur*1000,iterations:Infinity,direction:'alternate',easing:EZ})}
+  else if(f.t==='beam'){el=document.createElement('div');el.className='fx beam';el.style.clipPath=`polygon(${f.poly.map(p=>X(p[0])+' '+Y(p[1])).join(',')})`;
+   el.animate(f.flicker?[{opacity:f.max},{opacity:f.min,offset:.08},{opacity:f.max,offset:.12},{opacity:f.max*.8,offset:.5},{opacity:f.min,offset:.53},{opacity:f.max}]:[{opacity:f.min},{opacity:f.max}],{duration:f.flicker?2600:6000,iterations:Infinity,direction:f.flicker?'normal':'alternate',easing:EZ})}
+  else if(f.t==='flicker'){el=document.createElement('div');el.className='fx flick';box(el,f.x,f.y,f.w,f.h);el.animate([{opacity:0},{opacity:.14,offset:.1},{opacity:.02,offset:.2},{opacity:.1,offset:.55},{opacity:0}],{duration:900,iterations:Infinity})}
+  else if(f.t==='flash'){el=document.createElement('div');el.className='fx flash';box(el,f.cx-f.r,f.cy-f.r*1.4,f.r*2,f.r*2.8);
+   el.innerHTML='<svg viewBox="0 0 100 140"><path d="M58 8 L40 62 L56 60 L36 132" fill="none" stroke="#f4fbff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+   el.animate([{opacity:0},{opacity:0,offset:.62},{opacity:.95,offset:.64},{opacity:.1,offset:.67},{opacity:.7,offset:.69},{opacity:0,offset:.75},{opacity:0}],{duration:5200,iterations:Infinity})}
+  else if(f.t==='hand'){el=document.createElementNS('http://www.w3.org/2000/svg','svg');el.setAttribute('class','fx shand');el.setAttribute('viewBox','0 0 1440 900');el.setAttribute('preserveAspectRatio','none');
+   el.innerHTML=`<g class="sh" style="transform-origin:${f.cx}px ${f.cy}px"><line x1="${f.cx}" y1="${f.cy+28}" x2="${f.cx}" y2="${f.cy-f.len}" stroke="#e8efe4" stroke-width="2.2" stroke-linecap="round"/><circle cx="${f.cx}" cy="${f.cy}" r="7" fill="#e8efe4"/><circle cx="${f.cx}" cy="${f.cy-f.len}" r="3" fill="#bfe8cd"/></g>`;
+   const k=[];for(let i=0;i<=60;i++)k.push({transform:`rotate(${i*6}deg)`,offset:i/60,easing:'cubic-bezier(.3,1.9,.5,1)'});el.querySelector('.sh').animate(k,{duration:60000,iterations:Infinity})}
+  else if(f.t==='water'){el=crop(no,0,f.y,1440,f.h);el.classList.remove('soft');el.classList.add('water');el.style.animation='water 9s ease-in-out infinite alternate'}
+  else if(f.t==='fog'){el=document.createElement('div');el.className='fx fog';box(el,-200,f.y,1840,f.h);el.style.opacity=f.op;el.animate([{transform:'translateX(-4%)'},{transform:'translateX(4%)'}],{duration:26000,iterations:Infinity,direction:'alternate',easing:EZ})}
+  else if(f.t==='rings'){el=document.createElementNS('http://www.w3.org/2000/svg','svg');el.setAttribute('class','fx shand');el.setAttribute('viewBox','0 0 1440 900');el.setAttribute('preserveAspectRatio','none');
+   el.innerHTML=[0,1,2].map(i=>`<ellipse cx="${f.cx}" cy="${f.cy}" rx="40" ry="14" fill="none" stroke="#dbe9de" stroke-width="1.2" style="transform-origin:${f.cx}px ${f.cy}px;transform-box:view-box"/>`).join('');
+   [...el.querySelectorAll('ellipse')].forEach((e,i)=>e.animate([{transform:'scale(.6)',opacity:0},{opacity:.5,offset:.2},{transform:'scale(4)',opacity:0}],{duration:4800,delay:i*1600,iterations:Infinity,easing:'ease-out'}))}
+  else if(f.t==='dust'||f.t==='notes'){parts.push(f);continue}
+  if(el)L.appendChild(el)}
+ s._parts=parts}
+/* particles: dust in the light, stars, rain in the bottle, rising sparks, notes from the record */
+let pRaf=0,pScene=null;
+function particles(no){cancelAnimationFrame(pRaf);const s=sceneEl(no),cv=s.querySelector('.pc'),g=cv.getContext('2d'),em=(s._parts||[]).filter(p=>p.t);
+ const W=()=>cv.width=Math.round(cv.clientWidth),H=()=>cv.height=Math.round(cv.clientHeight);W();H();
+ const sx=()=>cv.width/1440,sy=()=>cv.height/900;const P=[];
+ for(const e of em){if(e.t==='notes'){for(let i=0;i<7;i++)P.push({e,u:Math.random(),sp:.05+Math.random()*.04,ch:Math.random()<.5?'♪':'♫',o:Math.random()*6});continue}
+  for(let i=0;i<e.n;i++)P.push({e,x:e.x+Math.random()*e.w,y:e.y+Math.random()*e.h,vx:(Math.random()-.5)*6,vy:e.kind==='rise'?-(8+Math.random()*14):e.kind==='rain'?40+Math.random()*30:(Math.random()-.5)*5,r:e.kind==='star'?.6+Math.random()*1.4:.5+Math.random()*1.6,ph:Math.random()*6.28})}
+ let last=performance.now();pScene=no;
+ (function frame(now){if(pScene!==no)return;if(!sceneVisible){last=now;pRaf=requestAnimationFrame(frame);return}const dt=Math.min(.05,(now-last)/1000);last=now;if(cv.width!==Math.round(cv.clientWidth)){W();H()}
+  g.clearRect(0,0,cv.width,cv.height);const X1=sx(),Y1=sy();
+  for(const p of P){const e=p.e;
+   if(e.t==='notes'){p.u+=p.sp*dt;if(p.u>1)p.u=0;const x=e.from[0]+(e.to[0]-e.from[0])*p.u,y=e.from[1]+(e.to[1]-e.from[1])*p.u+Math.sin(p.u*18+p.o)*26-Math.sin(p.u*3.14)*40;
+    g.globalAlpha=Math.sin(p.u*3.14)*.8;g.fillStyle='#dfeee2';g.font=`${18*X1}px "Xanh Mono",monospace`;g.fillText(p.ch,x*X1,y*Y1);continue}
+   p.x+=p.vx*dt;p.y+=p.vy*dt;p.ph+=dt*(e.kind==='star'?1.6:1);
+   if(p.x<e.x)p.x=e.x+e.w;if(p.x>e.x+e.w)p.x=e.x;if(p.y<e.y)p.y=e.y+e.h;if(p.y>e.y+e.h)p.y=e.y;
+   const a=e.kind==='star'?.25+.75*Math.abs(Math.sin(p.ph)):e.kind==='rain'?.55:.2+.5*Math.abs(Math.sin(p.ph*.7));
+   g.globalAlpha=a;g.fillStyle=e.kind==='rain'?'#dff3ff':'#eef6ea';g.beginPath();
+   if(e.kind==='rain'){g.fillRect(p.x*X1,p.y*Y1,1*X1,6*Y1)}else{g.arc(p.x*X1,p.y*Y1,p.r*X1,0,7);g.fill()}}
+  if(s._burst){let alive=0;for(const b of s._burst){if(b.l<=0)continue;alive++;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=.94;b.vy=b.vy*.94-6*dt;b.l-=dt*.55;g.globalAlpha=Math.max(0,b.l);g.fillStyle='#f2fbf4';g.beginPath();g.arc(b.x*X1,b.y*Y1,1.6*X1,0,7);g.fill()}if(!alive)s._burst=null}
+  g.globalAlpha=1;pRaf=requestAnimationFrame(frame)})(last)}
+
+/* the eye follows the pointer a little */
+stageEl.addEventListener('pointermove',e=>{const s=sceneEl(sc);const p=s&&s._parts&&s._parts.find(q=>q.look);if(!p)return;const r=stageEl.getBoundingClientRect();
+ const dx=((e.clientX-r.left)/r.width-.5)*2,dy=((e.clientY-r.top)/r.height-.4)*2;p.look.style.translate=`${dx*.5}cqw ${dy*.4}cqh`},{passive:true});
+
+/* the thought: typed over a dimmed picture, then the words turn to light, flow into the room's object, and one line stays */
+let tRun=0;
+function burst(no,x,y){const s=sceneEl(no);const P=[];for(let i=0;i<70;i++){const a=Math.random()*6.283,v=40+Math.random()*160;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1})}s._burst=P}
+async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector('.thought'),R=ROOMS[no],E=END[no];const mine=no===myRoom;
+ const v=(no==='38'&&mine&&mood)?MOOD[mood]:R.voice;const lines=own?[own]:[...(mine&&ans.when?[PRE[ans.when]]:[]),...v,...(mine&&ans.fate?[POST[ans.fate]]:[])];
+ T.className='thought';T.innerHTML=`<div class="voice"></div><p class="end" style="left:${X(E.at[0])};top:${Y(E.at[1])}"></p>`;
+ const V=T.querySelector('.voice'),EL=T.querySelector('.end');
+ if(reduce){EL.textContent=E.line;T.classList.add('done');return}
+ if(own){T.classList.add('on');const p=document.createElement('p');p.textContent=own;V.appendChild(p);await sleep(350)}else{
+ await sleep(500);if(run!==tRun)return;T.classList.add('on');
+ for(const l of lines){const p=document.createElement('p');V.appendChild(p);for(let i=1;i<=l.length;i++){if(run!==tRun)return;p.textContent=l.slice(0,i);await sleep(40)}await sleep(480)}}
+ await sleep(800);if(run!==tRun)return;
+ const sr=stageEl.getBoundingClientRect(),fx=sr.left+E.f[0]/1440*sr.width,fy=sr.top+E.f[1]/900*sr.height;
+ V.querySelectorAll('p').forEach(p=>{const t=p.textContent;p.innerHTML=[...t].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('')});
+ const spans=[...V.querySelectorAll('span')];
+ spans.forEach((sp,i)=>{const r=sp.getBoundingClientRect(),dx=fx-(r.left+r.width/2),dy=fy-(r.top+r.height/2),mx=dx*.45+(Math.random()-.5)*80,my=dy*.45-60-Math.random()*60;
+  sp.animate([{transform:'translate(0,0) scale(1)',opacity:1,filter:'blur(0)'},{transform:`translate(${mx}px,${my}px) scale(.7)`,opacity:.9,filter:'blur(1px)',offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.08)`,opacity:0,filter:'blur(3px)'}],
+   {duration:1500+Math.random()*500,delay:i*14,easing:'cubic-bezier(.5,0,.3,1)',fill:'forwards'})});
+ await sleep(1500+spans.length*14*.6);if(run!==tRun)return;
+ T.classList.add('turn');const fl=document.createElement('div');fl.className='fx land';box(fl,E.f[0]-260,E.f[1]-260,520,520);s.querySelector('.fxl').appendChild(fl);
+ fl.animate([{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)',offset:.25},{opacity:0,transform:'scale(1.5)'}],{duration:2200,easing:'ease-out',fill:'forwards'}).finished.then(()=>fl.remove());
+ burst(no,E.f[0],E.f[1]);
+ await sleep(900);if(run!==tRun)return;
+ EL.innerHTML=[...E.line].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('');T.classList.add('done');
+ [...EL.children].forEach((c,i)=>c.animate([{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'blur(0)'}],{duration:700,delay:i*28,fill:'both',easing:'ease-out'}));
+ await sleep(1600);if(run!==tRun)return;invite(no)}
+/* the quiz: a neural web that lights up, fades and passes signals along */
+{const cv=$('#askNet');if(cv&&!reduce){const g=cv.getContext('2d');let W,H,N=[],E=[],P=[],run=false,last=0;
+ function build(){W=cv.width=cv.clientWidth;H=cv.height=cv.clientHeight;N=[];const n=Math.round(W*H/9000);
+  for(let i=0;i<n;i++){const x=Math.random()*W,y=Math.random()*H;N.push({x,y,ph:Math.random()*6.28,sp:.15+Math.random()*.35,dx:(Math.random()-.5)*4,dy:(Math.random()-.5)*4})}
+  E=[];for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const d=Math.hypot(N[i].x-N[j].x,N[i].y-N[j].y);if(d<W*.1)E.push([i,j,d])}P=[]}
+ function frame(now){if(!run)return;const dt=Math.min(.05,(now-last)/1000||0);last=now;const t=now/1000;g.clearRect(0,0,W,H);
+  /* a node breathes in and out; links between two awake nodes glow */
+  for(const a of N){a.l=Math.max(0,Math.sin(t*a.sp+a.ph));a.cx=a.x+Math.sin(t*.2+a.ph)*a.dx;a.cy=a.y+Math.cos(t*.17+a.ph)*a.dy}
+  g.lineWidth=1;for(const[i,j,d]of E){const al=Math.sqrt(N[i].l*N[j].l)*(1-d/(W*.1));if(al<.02)continue;g.strokeStyle=`rgba(140,230,180,${al*.6})`;g.beginPath();g.moveTo(N[i].cx,N[i].cy);g.lineTo(N[j].cx,N[j].cy);g.stroke()}
+  for(const a of N){if(a.l<.05)continue;g.fillStyle=`rgba(200,255,225,${a.l*.75})`;g.beginPath();g.arc(a.cx,a.cy,1+a.l*1.6,0,7);g.fill()}
+  /* signals run along links that are awake */
+  if(P.length<26&&Math.random()<.5){const e=E[Math.floor(Math.random()*E.length)];if(e&&N[e[0]].l*N[e[1]].l>.25)P.push({e,u:0,v:.5+Math.random()*.8,back:Math.random()<.5})}
+  for(const p of P){p.u+=dt*p.v;const[i,j]=p.e,A=p.back?N[j]:N[i],B=p.back?N[i]:N[j],x=A.cx+(B.cx-A.cx)*p.u,y=A.cy+(B.cy-A.cy)*p.u,al=Math.sin(Math.PI*Math.min(1,p.u));
+   const gr=g.createRadialGradient(x,y,0,x,y,10);gr.addColorStop(0,`rgba(220,255,235,${.8*al})`);gr.addColorStop(1,'rgba(220,255,235,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,10,0,7);g.fill()}
+  P=P.filter(p=>p.u<1);requestAnimationFrame(frame)}
+ build();addEventListener('resize',build);
+ new IntersectionObserver(es=>{const on=es[0].isIntersecting;if(on&&!run){run=true;last=performance.now();requestAnimationFrame(frame)}else if(!on)run=false},{threshold:.15}).observe(cv)}}
+/* the thought film */
+{const sec=$('#mind'),v=$('#mindV'),ps=$$('#mindCopy p');let seen=false;
+ /* the move to the left is inside the film; phones get the film without it, the text sits below */
+ if(matchMedia('(max-width:860px)').matches)v.src=v.getAttribute('src').replace('think.mp4','think-still.mp4');
+ const reset=()=>{v.pause();v.currentTime=0;sec.classList.remove('split','on');ps.forEach(p=>p.classList.remove('on'))};
+ new IntersectionObserver(es=>{const e=es[0],full=e.intersectionRatio>=.85;
+  if(full&&!seen){seen=true;reset();requestAnimationFrame(()=>{sec.classList.add('on');v.play().catch(()=>{})})}
+  if(!e.isIntersecting&&seen){seen=false;reset()}},{threshold:[0,.5,.85,1]}).observe(sec);
+ v.addEventListener('timeupdate',()=>{const t=v.currentTime;if(t>=6.2&&!sec.classList.contains('split'))sec.classList.add('split');ps.forEach(p=>{if(t>=+p.dataset.at&&!p.classList.contains('on'))p.classList.add('on')})});
+ v.addEventListener('ended',()=>{v.pause()})}
+/* after the story the room listens: a caret waits, the visitor types a thought, Enter sends it into the object */
+function invite(no){const s=sceneEl(no),T=s.querySelector('.thought');if(!T||T.querySelector('.mine'))return;const m=document.createElement('p');m.className='mine';m.contentEditable='plaintext-only';m.spellcheck=false;m.setAttribute('role','textbox');m.setAttribute('aria-label','Your thought');T.appendChild(m);
+ m.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const t=m.textContent.trim().slice(0,90);if(!t)return;m.remove();T.classList.remove('done','turn');thought(no,t)}});
+ m.addEventListener('input',()=>{if(m.textContent.length>90)m.textContent=m.textContent.slice(0,90)})}
+stageEl.addEventListener('click',e=>{if(e.target.closest('.hot,.dots,.mine'))return;const m=sceneEl(sc)&&sceneEl(sc).querySelector('.mine');if(m){m.focus({preventScroll:true})}});
+addEventListener('keydown',e=>{if(!sceneVisible||e.metaKey||e.ctrlKey||e.altKey||e.key.length!==1)return;const a=document.activeElement;if(a&&(a.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(a.tagName)))return;const m=sceneEl(sc)&&sceneEl(sc).querySelector('.mine');if(m){m.focus({preventScroll:true})}});
+
+function showScene(no,scroll){if(sc===no){if(scroll)$('#scenes').scrollIntoView({behavior:reduce?'auto':'smooth'});return}
+ const prev=sc;sc=no;build(no);navUpdate(no);
+ $$('.scene',slides).forEach(s=>{const on=s.dataset.no===no;s.classList.toggle('on',on);s.getAnimations({subtree:true}).forEach(a=>{if(typeof CSSTransition!=='undefined'&&a instanceof CSSTransition)return;on?a.play():a.pause()})});
+ $$('#sDots button').forEach(b=>b.classList.toggle('on',b.dataset.no===no));
+ particles(no);if(sceneVisible)thought(no);else pendingThought=true;
+ if(scroll)$('#scenes').scrollIntoView({behavior:reduce?'auto':'smooth'})}
+let sceneVisible=false,pendingThought=false;
+new IntersectionObserver(es=>{const e=es[es.length-1];const need=Math.min(e.boundingClientRect.height,innerHeight)*.94;const full=e.isIntersecting&&e.intersectionRect.height>=need;
+ const was=sceneVisible;sceneVisible=full;stageEl.classList.toggle('off',!full);
+ if(full&&!was){if(pendingThought||!sceneEl(sc).querySelector('.thought.done')){pendingThought=false;thought(sc)}}
+ if(!full&&was){const T=sceneEl(sc)&&sceneEl(sc).querySelector('.thought');if(T&&!T.classList.contains('done')){tRun++;pendingThought=true;T.className='thought';T.innerHTML=''}}},
+ {threshold:[0,.25,.5,.75,.85,.9,.94,.97,1]}).observe(stageEl);
+const step2=d=>showScene(SC[(SC.indexOf(sc)+d+SC.length)%SC.length]);
+$('#sPrev').addEventListener('click',()=>step2(-1));$('#sNext').addEventListener('click',()=>step2(1));
+$('#sAll').addEventListener('click',()=>$('#rooms').scrollIntoView({behavior:reduce?'auto':'smooth'}));
+$('#sDots').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showScene(b.dataset.no)});
+stageEl.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')step2(-1);if(e.key==='ArrowRight')step2(1)});
+{let x0=null;stageEl.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});stageEl.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)step2(dx<0?1:-1);x0=null},{passive:true})}
+/* the questionnaire picks the scene too */
+function load(no){showScene(no)}
+showScene('34');
+{const q=new URLSearchParams(location.search).get('scene');if(q&&ROOMS[q]){showScene(q);setTimeout(()=>$('#scenes').scrollIntoView(),300)}}
+
+/* reserve */
+const form=$('#wl'),err=$('#wlError'),sub=$('#wlSubmit'),done=$('#wlDone');
+form.addEventListener('submit',async e=>{e.preventDefault();err.hidden=true;const email=$('#wlEmail').value.trim();
+ const name=$('#wlName').value.trim().slice(0,120),field=$('#wlCo').value.trim().slice(0,160),website=$('#wlWeb').value.trim().slice(0,200);
+ if(!name){err.textContent='Add your full name.';err.hidden=false;$('#wlName').focus();return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){err.textContent='Check the email address, like you@studio.com.';err.hidden=false;$('#wlEmail').focus();return}
+ const room=myRoom?myRoom+', '+ROOMS[myRoom].name:'';
+ sub.disabled=true;sub.textContent='Sending…';
+ const ok=await window.vzLead({type:'client',name,email,field,website,room});
+ sub.disabled=false;sub.textContent='Reserve my room';
+ if(ok){form.hidden=true;done.hidden=false}else{err.innerHTML=window.vzFail;err.hidden=false}});
+
+/* partner / investor */
+$$('.xform').forEach(f=>{const box=f.parentNode,er=box.querySelector('.err'),dn=box.querySelector('.pdone'),inv=f.dataset.kind==='investor',btn=f.querySelector('button'),lbl=btn.textContent;
+ f.addEventListener('submit',async e=>{e.preventDefault();er.hidden=true;const v=id=>document.getElementById(id).value.trim();let d;
+  if(inv){d={type:'investor',name:v('iName'),email:v('iEmail'),whatsapp:v('iWa'),website:v('iWeb'),role:v('iRole')};if(!d.name||!d.email||!d.whatsapp){er.textContent='Add your full name, email and WhatsApp.';er.hidden=false;return}}
+  else{d={type:'partner',name:v('pName'),email:v('pEmail'),field:v('pField'),website:v('pWeb')};if(!d.name||!d.email||!d.field){er.textContent='Add your full name, email and field.';er.hidden=false;return}}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)){er.textContent='Check the email address.';er.hidden=false;return}
+  btn.disabled=true;btn.textContent='Sending…';const ok=await window.vzLead(d);btn.disabled=false;btn.textContent=lbl;
+  if(ok){dn.innerHTML='<b>Thank you.</b>We will be in touch.';dn.hidden=false;f.hidden=true}else{er.innerHTML=window.vzFail;er.hidden=false}})});
+$$('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('.acc details').forEach(o=>{if(o!==d)o.open=false})}));
+})();
+</script>
+<script>
+/* ---------- the set: turntables rendered in Blender Cycles (her set, rebuilt with one continuous collar).
+   Drag to turn, pinch or ± to zoom, tabs switch to the necklace, ear clip or case. ---------- */
+(()=>{const host=document.getElementById('vitrine');if(!host)return;
+ const SEQ={set:[...Array(24).keys()],case:[9,10,11,0,1,2,3],necklace:[...Array(16).keys()],clip:[...Array(12).keys()]},WRAP={set:1,necklace:1,clip:1};
+ const N={set:24,necklace:16,clip:12,case:12};const TURN=(typeof TURN_IMG!=='undefined')?TURN_IMG:null;
+ const src=(v,i)=>TURN?TURN[v][i]:`/n/turn/${v}/${String(i).padStart(2,'0')}.jpg`;
+ const L=v=>SEQ[v].length,start=v=>SEQ[v].indexOf(0);
+ const stage=host.querySelector('.spin'),img=stage.querySelector('img');let view='set',f=0,zoom=1,drag=null,idle=0,auto=true;
+ const cache={};function preload(v){if(cache[v])return;cache[v]=[];for(let i=0;i<N[v];i++){const im=new Image();im.decoding='async';im.src=src(v,i);cache[v].push(im)}}
+ const cv=document.createElement('canvas');cv.className='spincv';stage.appendChild(cv);img.style.display='none';const cx=cv.getContext('2d');
+ function show(){const im=(cache[view]||[])[SEQ[view][f]];if(!im)return;const draw=()=>{const r=stage.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(cv.width!==Math.round(r.width*d)){cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d)}
+  const s=Math.max(cv.width/im.naturalWidth,cv.height/im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(im,(cv.width-w)/2,(cv.height-h)/2,w,h)};
+  if(im.complete&&im.naturalWidth)draw();else im.decode().then(draw).catch(()=>{})}
+ addEventListener('resize',()=>show());
+ function setView(v){if(!N[v])v='set';view=v;f=start(v);preload(v);cv.style.opacity=0;setTimeout(()=>{show();cv.style.opacity=1},220);zoom=1;cv.style.transform='scale(1)'}
+ window.__v3dChoose=setView;window.__v3dZoom=k=>{zoom=Math.max(1,Math.min(2.6,zoom/k));cv.style.transform=`scale(${zoom})`};
+ stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,f};auto=false;try{stage.setPointerCapture(e.pointerId)}catch(_){}});
+ stage.addEventListener('pointermove',e=>{if(!drag)return;const step=Math.max(14,stage.clientWidth/(L(view)*(WRAP[view]?1.6:1.2)));const d=Math.round((e.clientX-drag.x)/step);const nf=WRAP[view]?((drag.f+d)%L(view)+L(view))%L(view):Math.max(0,Math.min(L(view)-1,drag.f+d));if(nf!==f){f=nf;show()}});
+ const end=()=>{drag=null;idle=0};stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);
+ stage.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();window.__v3dZoom(Math.exp(e.deltaY*.01))},{passive:false});
+ let pinch=0;const td=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+ stage.addEventListener('touchstart',e=>{if(e.touches.length===2){pinch=td(e.touches);drag=null}},{passive:true});
+ stage.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinch){e.preventDefault();const d=td(e.touches);window.__v3dZoom(pinch/d);pinch=d}},{passive:false});
+ stage.addEventListener('touchend',()=>{pinch=0},{passive:true});
+ stage.addEventListener('keydown',e=>{const mv=k=>{f=WRAP[view]?(f+k+L(view))%L(view):Math.max(0,Math.min(L(view)-1,f+k));show()};if(e.key==='ArrowLeft')mv(1);if(e.key==='ArrowRight')mv(-1);});
+ let vis=false;new IntersectionObserver(es=>{vis=es.some(e=>e.isIntersecting);if(vis)preload(view)},{rootMargin:'300px 0px'}).observe(host);
+ 
+ preload('set');f=start('set');show();const lp=document.getElementById('lobbyPiece');if(lp)lp.src=src('set',0);host.classList.add('ready');})();
+</script>
+</body>
+</html>
