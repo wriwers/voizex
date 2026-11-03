@@ -120,7 +120,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
 .mind-copy p{margin:0 0 1.4em;font-family:var(--serif);font-size:clamp(18px,1.7vw,28px);line-height:1.32;color:var(--ink);opacity:0;transform:translate3d(0,12px,0);transition:opacity 1.4s ease,transform 1.4s ease}
 .mind-copy p:first-child{font-size:clamp(22px,2.2vw,36px)}
 .mind-copy p.on{opacity:1;transform:none}
-@media (max-width:860px){.mind{height:auto;min-height:0;padding-bottom:40px}.mind .mv,.mind.split .mv{position:relative;inset:auto;height:62vw;transform:none}.mind-copy{position:relative;right:auto;top:auto;transform:none;width:auto;padding:28px 24px 0}}
+@media (max-width:860px){.mind{height:auto;min-height:0;padding-bottom:40px}.mind .mv,.mind.split .mv{position:relative;inset:auto;height:72vw;transform:none}.mind .mv video{object-fit:cover}.mind-copy p{opacity:1;transform:none;font-size:18px}.mind-copy p:first-child{font-size:22px}.mind-copy{position:relative;right:auto;top:auto;transform:none;width:auto;padding:28px 24px 0}}
 .ask{min-height:100svh;display:flex;align-items:flex-start;padding-top:14vh}
 .ask .net{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
 .ask .bgimg{background:radial-gradient(70% 60% at 30% 35%,#0b2a17 0%,#06170d 55%,#030b06 100%)}
@@ -210,7 +210,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
   .lobby .piece{width:88vw;bottom:24%}
   .lobby .title{flex-direction:column;align-items:flex-start;padding-bottom:6vh}
   .set-grid,.q-grid,.acc .body,.g2{grid-template-columns:1fr}
-  .set-grid{padding:10vh 0 6vh}
+  .set-grid{padding:10vh clamp(20px,5vw,72px) 6vh}
   .vit{height:62svh}
   .setsec .veil{background:linear-gradient(180deg,var(--bg),rgba(2,8,5,.55) 30%,rgba(2,8,5,.3) 70%,var(--bg))}
   .floor{grid-template-columns:repeat(2,1fr);gap:28px 16px}
@@ -264,10 +264,21 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
 .stage::after{content:'';position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(180deg,transparent,rgba(3,12,7,.78));pointer-events:none;z-index:3}
 .stitle{position:absolute;left:6.5%;top:11%;margin:0;z-index:4;font-family:'Xanh Mono',monospace;font-weight:400;font-size:5cqw;line-height:1;color:#eef2ea;text-shadow:0 2px 30px rgba(0,0,0,.45);pointer-events:none;transition:opacity .5s}
 .stage.typing .stitle{opacity:.25}
+@media (max-width:860px){
+  .stage{aspect-ratio:auto;height:min(80svh,680px)}
+  .slides{position:absolute;top:0;height:100%;aspect-ratio:1440/900;left:var(--sx,0px);transition:left .6s ease}
+  .stitle{font-size:34px;left:20px;top:78px}
+  .voice,.mine{left:var(--vcx,50%)!important;width:28cqw!important;font-size:3.2cqw!important}
+  .end{left:var(--ex,6%)!important;top:70%!important;white-space:normal!important;width:26cqw;font-size:2.4cqw!important}
+  .stage::after{height:34%}
+  .hot.prev,.hot.next{top:auto;bottom:14px;height:48px;width:44%;font-size:13px;gap:8px}
+  .hot .k{font-size:9px}.hot .ar{font-size:18px}
+}
 .dots{position:absolute;left:32%;top:90.5%;width:36%;height:6%;display:grid;grid-template-columns:repeat(10,1fr);z-index:5}
 .dots button{background:none;border:0;cursor:pointer;padding:0;color:rgba(232,239,230,.42);font-family:'Xanh Mono',monospace;font-size:1.2cqw;transition:color .3s}
 .dots button span{border-bottom:1px solid transparent;padding-bottom:.25em}
 .dots button:hover{color:#eef4ea}.dots button.on{color:#eef4ea}.dots button.on span{border-bottom-color:#eef4ea}
+@media (max-width:860px){.dots{left:12px;right:12px;width:auto;top:auto;bottom:70px;height:36px}.dots button{font-size:14px}}
 
 .it{font-style:normal!important}
 </style>
@@ -611,7 +622,7 @@ async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector(
  await sleep(500);if(run!==tRun)return;T.classList.add('on');
  for(const l of lines){const p=document.createElement('p');V.appendChild(p);for(let i=1;i<=l.length;i++){if(run!==tRun)return;p.textContent=l.slice(0,i);await sleep(40)}await sleep(480)}}
  await sleep(800);if(run!==tRun)return;
- const sr=stageEl.getBoundingClientRect(),fx=sr.left+E.f[0]/1440*sr.width,fy=sr.top+E.f[1]/900*sr.height;
+ const sr=slides.getBoundingClientRect(),fx=sr.left+E.f[0]/1440*sr.width,fy=sr.top+E.f[1]/900*sr.height;
  V.querySelectorAll('p').forEach(p=>{const t=p.textContent;p.innerHTML=[...t].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('')});
  const spans=[...V.querySelectorAll('span')];
  spans.forEach((sp,i)=>{const r=sp.getBoundingClientRect(),dx=fx-(r.left+r.width/2),dy=fy-(r.top+r.height/2),mx=dx*.45+(Math.random()-.5)*80,my=dy*.45-60-Math.random()*60;
@@ -659,8 +670,14 @@ function invite(no){const s=sceneEl(no),T=s.querySelector('.thought');if(!T||T.q
 stageEl.addEventListener('click',e=>{if(e.target.closest('.hot,.dots,.mine'))return;const m=sceneEl(sc)&&sceneEl(sc).querySelector('.mine');if(m){m.focus({preventScroll:true})}});
 addEventListener('keydown',e=>{if(!sceneVisible||e.metaKey||e.ctrlKey||e.altKey||e.key.length!==1)return;const a=document.activeElement;if(a&&(a.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(a.tagName)))return;const m=sceneEl(sc)&&sceneEl(sc).querySelector('.mine');if(m){m.focus({preventScroll:true})}});
 
+/* phones: the 16:10 picture is wider than the screen, so it slides to keep this room's object in view */
+function frameMobile(no){const sl=$('#slides');if(!matchMedia('(max-width:860px)').matches){sl.style.removeProperty('--sx');stageEl.style.removeProperty('--vcx');stageEl.style.removeProperty('--ex');return}
+ const H=stageEl.clientHeight,Wsl=H*1.6,vis=1440*stageEl.clientWidth/Wsl,fx=(END[no]||{f:[720]}).f[0],c=Math.max(vis/2,Math.min(1440-vis/2,fx));
+ sl.style.setProperty('--sx',(stageEl.clientWidth/2-c/1440*Wsl)+'px');
+ sl.style.setProperty('--vcx',(c/1440*100)+'%');sl.style.setProperty('--ex',((c-vis/2+vis*.08)/1440*100)+'%')}
+addEventListener('resize',()=>{if(sc)frameMobile(sc)});
 function showScene(no,scroll){if(sc===no){if(scroll)$('#scenes').scrollIntoView({behavior:reduce?'auto':'smooth'});return}
- const prev=sc;sc=no;build(no);navUpdate(no);
+ const prev=sc;sc=no;build(no);navUpdate(no);frameMobile(no);
  $$('.scene',slides).forEach(s=>{const on=s.dataset.no===no;s.classList.toggle('on',on);s.getAnimations({subtree:true}).forEach(a=>{if(typeof CSSTransition!=='undefined'&&a instanceof CSSTransition)return;on?a.play():a.pause()})});
  $$('#sDots button').forEach(b=>b.classList.toggle('on',b.dataset.no===no));
  particles(no);if(sceneVisible)thought(no);else pendingThought=true;
