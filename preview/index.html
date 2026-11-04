@@ -281,6 +281,40 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
 @media (max-width:860px){.dots{left:12px;right:12px;width:auto;top:auto;bottom:70px;height:36px}.dots button{font-size:14px}}
 
 .it{font-style:normal!important}
+
+/* phones: her notes from 04.11 */
+@media (max-width:860px){
+  .lobby .bgimg{background-position:45% 50%!important}
+  .set-grid{display:flex;flex-direction:column;gap:18px;padding-top:76px!important}
+  .set-grid .vit{order:-1;height:54svh;margin-top:0;width:100%;flex:none}
+  .set-grid .set-copy{width:100%}
+  .ask{padding-top:84px;padding-bottom:40px;min-height:0}
+  .ask-card{height:auto!important;padding:24px 18px 20px!important}
+  .ask h2{font-size:24px;height:auto;min-height:2.3em;margin:14px 0}
+  .opts{gap:2px;max-height:none}
+  .opt{font-size:17px;padding:11px 14px}
+  .keytag{flex-wrap:wrap;gap:10px;padding:4px 14px}
+  .keytag .kn{font-size:56px}.keytag .kname{font-size:22px}
+  .kacts{padding:16px 14px 0}
+  .queue{padding:70px 0 50px}
+  .queue h2,.foot h2{font-size:40px}
+  .form-card{padding:14px 10px!important}
+  .field{padding:6px 10px}
+  .field label{font-size:12px;margin-bottom:0}
+  .field input{font-size:17px;padding:4px 0 6px}
+  .go{font-size:19px;margin:14px 10px 4px}
+  .acc summary{padding:18px;font-size:24px}
+  .acc .body{padding:0 8px 14px;gap:10px}
+  .acc .pdesc{font-size:16px;padding:0 10px}
+  .stage{height:min(86svh,720px)}
+  .stage::before{content:'';position:absolute;left:0;right:0;top:0;height:16%;background:linear-gradient(180deg,var(--bg),rgba(4,12,8,0));pointer-events:none;z-index:3}
+  .stage::after{height:38%;background:linear-gradient(180deg,rgba(4,12,8,0),rgba(4,12,8,.85) 60%,var(--bg))}
+  .stitle{transition:opacity .6s}
+  .stage.typing .stitle{opacity:0}
+  .voice,.mine{top:46%!important;font-size:3cqw!important}
+  .end{top:56%!important;font-size:2.2cqw!important}
+  .mind .mv,.mind.split .mv{height:112vw}
+}
 </style>
 </head>
 <body>
@@ -311,7 +345,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
 
 <section class="mind" id="mind" aria-label="How VOIZEX works">
   <div class="breath" aria-hidden="true"><i></i></div>
-  <div class="mv" id="mindBox"><video id="mindV" muted playsinline preload="auto" src="n/think/think.mp4"></video><div class="edge"></div></div>
+  <div class="mv" id="mindBox"><video id="mindV" muted playsinline preload="auto" poster="n/think/poster.jpg" src="n/think/think.mp4"></video><div class="edge"></div></div>
   <div class="mind-copy" id="mindCopy">
     <p data-at="6.6">Most thoughts never leave your head.</p>
     <p data-at="8.4">VOIZEX hears the words you say silently. Sensors at the neck read them before a sound is made.</p>
@@ -491,7 +525,7 @@ const FOCAL={'34':69,'35':50,'36':30,'37':62,'38':49,'39':50,'40':65,'41':40,'42
 const sceneSrc=no=>(typeof SCENE_IMG!=='undefined'?SCENE_IMG[no]:`/n/scenes/${no}.jpg`);
 const doorSrc=no=>(typeof DOOR_IMG!=='undefined'?DOOR_IMG[no]:`/n/doors/${no}.jpg`);
 const doorBlur=no=>(typeof DOORB_IMG!=='undefined'?DOORB_IMG[no]:`/n/doors/${no}_b.jpg`);
-floor.innerHTML=Object.entries(ROOMS).map(([no,R],i)=>`<div class="door rv" style="transition-delay:${(i%5)*90}ms" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><div class="pane"><img src="${doorSrc(no)}" alt="" loading="lazy"><div class="shade" style="background-image:linear-gradient(180deg,rgba(4,14,9,.55),rgba(3,10,7,.94)),url(${doorBlur(no)})"></div><span class="num">${no}</span></div><span class="name">${esc(R.name)}</span></div>`).join('');
+floor.innerHTML=Object.entries(ROOMS).map(([no,R],i)=>`<div class="door rv" style="transition-delay:${(i%5)*90}ms" role="button" tabindex="0" data-no="${no}" aria-label="Room ${no}, ${esc(R.name)}"><div class="pane"><img src="${doorSrc(no)}" alt="" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;const u=this.src;this.src='';setTimeout(()=>this.src=u,800)}"><div class="shade" style="background-image:linear-gradient(180deg,rgba(4,14,9,.55),rgba(3,10,7,.94)),url(${doorBlur(no)})"></div><span class="num">${no}</span></div><span class="name">${esc(R.name)}</span></div>`).join('');
 $$('.door.rv',floor).forEach(el=>io.observe(el));
 const opened=new Set();
 function closeDoor(no){opened.delete(no);const d=floor.querySelector(`.door[data-no="${no}"]`);d&&d.classList.remove('isopen')}
@@ -615,7 +649,7 @@ let tRun=0;
 function burst(no,x,y){const s=sceneEl(no);const P=[];for(let i=0;i<70;i++){const a=Math.random()*6.283,v=40+Math.random()*160;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1})}s._burst=P}
 async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector('.thought'),R=ROOMS[no],E=END[no];const mine=no===myRoom;
  const v=(no==='38'&&mine&&mood)?MOOD[mood]:R.voice;const lines=own?[own]:[...(mine&&ans.when?[PRE[ans.when]]:[]),...v,...(mine&&ans.fate?[POST[ans.fate]]:[])];
- T.className='thought';T.innerHTML=`<div class="voice"></div><p class="end" style="left:${X(E.at[0])};top:${Y(E.at[1])}"></p>`;
+ stageEl.classList.add('typing');T.className='thought';T.innerHTML=`<div class="voice"></div><p class="end" style="left:${X(E.at[0])};top:${Y(E.at[1])}"></p>`;
  const V=T.querySelector('.voice'),EL=T.querySelector('.end');
  if(reduce){EL.textContent=E.line;T.classList.add('done');return}
  if(own){T.classList.add('on');const p=document.createElement('p');p.textContent=own;V.appendChild(p);await sleep(350)}else{
@@ -633,7 +667,7 @@ async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector(
  fl.animate([{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)',offset:.25},{opacity:0,transform:'scale(1.5)'}],{duration:2200,easing:'ease-out',fill:'forwards'}).finished.then(()=>fl.remove());
  burst(no,E.f[0],E.f[1]);
  await sleep(900);if(run!==tRun)return;
- EL.innerHTML=[...E.line].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('');T.classList.add('done');
+ EL.innerHTML=[...E.line].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('');T.classList.add('done');stageEl.classList.remove('typing');
  [...EL.children].forEach((c,i)=>c.animate([{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'blur(0)'}],{duration:700,delay:i*28,fill:'both',easing:'ease-out'}));
  await sleep(1600);if(run!==tRun)return;invite(no)}
 /* the quiz: a neural web that lights up, fades and passes signals along */
@@ -658,9 +692,9 @@ async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector(
  /* the move to the left is inside the film; phones get the film without it, the text sits below */
  if(matchMedia('(max-width:860px)').matches)v.src=v.getAttribute('src').replace('think.mp4','think-still.mp4');
  const reset=()=>{v.pause();v.currentTime=0;sec.classList.remove('split','on');ps.forEach(p=>p.classList.remove('on'))};
- new IntersectionObserver(es=>{const e=es[0],full=e.intersectionRatio>=.85;
+ new IntersectionObserver(es=>{const e=es[0],full=e.intersectionRatio>=(matchMedia('(max-width:860px)').matches?.45:.85);
   if(full&&!seen){seen=true;reset();requestAnimationFrame(()=>{sec.classList.add('on');v.play().catch(()=>{})})}
-  if(!e.isIntersecting&&seen){seen=false;reset()}},{threshold:[0,.5,.85,1]}).observe(sec);
+  if(!e.isIntersecting&&seen){seen=false;reset()}},{threshold:[0,.45,.5,.85,1]}).observe(sec);
  v.addEventListener('timeupdate',()=>{const t=v.currentTime;if(t>=6.2&&!sec.classList.contains('split'))sec.classList.add('split');ps.forEach(p=>{if(t>=+p.dataset.at&&!p.classList.contains('on'))p.classList.add('on')})});
  v.addEventListener('ended',()=>{v.pause()})}
 /* after the story the room listens: a caret waits, the visitor types a thought, Enter sends it into the object */
@@ -742,6 +776,9 @@ $$('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('.ac
  stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,f};auto=false;try{stage.setPointerCapture(e.pointerId)}catch(_){}});
  stage.addEventListener('pointermove',e=>{if(!drag)return;const step=Math.max(14,stage.clientWidth/(L(view)*(WRAP[view]?1.6:1.2)));const d=Math.round((e.clientX-drag.x)/step);const nf=WRAP[view]?((drag.f+d)%L(view)+L(view))%L(view):Math.max(0,Math.min(L(view)-1,drag.f+d));if(nf!==f){f=nf;show()}});
  const end=()=>{drag=null;idle=0};stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);
+ let tx=null,tf=0;stage.addEventListener('touchstart',e=>{if(e.touches.length===1){tx=e.touches[0].clientX;tf=f;auto=false}},{passive:true});
+ stage.addEventListener('touchmove',e=>{if(tx===null||e.touches.length!==1)return;const d=e.touches[0].clientX-tx;if(Math.abs(d)<6)return;e.preventDefault();const step=Math.max(10,stage.clientWidth/(L(view)*1.4)),k=Math.round(d/step);const nf=WRAP[view]?((tf+k)%L(view)+L(view))%L(view):Math.max(0,Math.min(L(view)-1,tf+k));if(nf!==f){f=nf;show()}},{passive:false});
+ stage.addEventListener('touchend',()=>{tx=null},{passive:true});
  stage.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();window.__v3dZoom(Math.exp(e.deltaY*.01))},{passive:false});
  let pinch=0;const td=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
  stage.addEventListener('touchstart',e=>{if(e.touches.length===2){pinch=td(e.touches);drag=null}},{passive:true});
