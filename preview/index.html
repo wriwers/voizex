@@ -343,6 +343,18 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
   /* reserve: the line sits only under the words */
   .go{display:inline-block;width:auto;-webkit-appearance:none;appearance:none;text-decoration:none;border-bottom:1px solid currentColor;padding:4px 0 3px;border-radius:0}
 }
+
+/* phones, pass 3 (04.11): no jumps, a wider 3D view, visible switches */
+@media (max-width:860px){
+  .rooms,.ask,.queue,.setsec,footer{content-visibility:visible;contain-intrinsic-size:none}
+  .floor .door.rv{opacity:1;transform:none;transition:none}
+  .door:hover .pane{transform:none}
+  .set-grid .vit{width:100vw;margin:0 calc(-1*clamp(20px,5vw,72px));height:70svh;
+    -webkit-mask-image:radial-gradient(ellipse 72% 58% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 58% at 50% 50%,#000 62%,transparent 100%)}
+  .set-grid .tab{opacity:.72;font-size:16px;padding:10px 0;border-bottom:1px solid transparent}
+  .set-grid .tab[aria-pressed=true]{opacity:1;border-bottom-color:currentColor}
+}
+@media (hover:none){.door:hover .pane{transform:none}.door:hover .shade{opacity:1}}
 </style>
 </head>
 <body>
