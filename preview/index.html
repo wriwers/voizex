@@ -315,6 +315,34 @@ h1,h2,h3{font-family:var(--serif);font-weight:300;letter-spacing:-.01em;margin:0
   .end{top:56%!important;font-size:2.2cqw!important}
   .mind .mv,.mind.split .mv{height:112vw}
 }
+
+/* phones, pass 2 (04.11): her order and proportions */
+@media (max-width:860px){
+  /* the set: switches, then a big 3D view, then short captions */
+  .set-grid .set-copy{display:contents}
+  .set-grid .tabs{order:0;margin:0;justify-content:space-between;gap:8px;width:100%}
+  .set-grid .tab{font-size:15px;padding:8px 0}
+  .set-grid .vit{order:1;height:66svh}
+  .set-grid .ring{order:2}
+  .ring .spec{margin-bottom:8px;font-size:12px}
+  .ring h2{font-size:30px;margin-bottom:10px}
+  .ring p{font-size:16px;line-height:1.45}
+  /* the film owns a whole screen; its words come in under it as it plays */
+  .mind{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:64px 0 32px}
+  .mind .mv,.mind.split .mv{height:120vw;flex:none}
+  .mind-copy p{opacity:0!important;transform:translate3d(0,12px,0)!important;transition:opacity 1.4s ease,transform 1.4s ease}
+  .mind-copy p.on{opacity:1!important;transform:none!important}
+  /* doors: one row you swipe through */
+  .floor{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px!important;margin:0 calc(-1*clamp(20px,5vw,72px));padding:0 clamp(20px,5vw,72px) 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .floor::-webkit-scrollbar{display:none}
+  .floor .door{flex:0 0 62vw;scroll-snap-align:center}
+  /* rooms: swipe to move, no previous/next labels, a taller picture */
+  .hot.prev,.hot.next{display:none!important}
+  .stage{height:min(90svh,760px)}
+  .dots{bottom:22px!important}
+  /* reserve: the line sits only under the words */
+  .go{display:inline-block;width:auto;-webkit-appearance:none;appearance:none;text-decoration:none;border-bottom:1px solid currentColor;padding:4px 0 3px;border-radius:0}
+}
 </style>
 </head>
 <body>
@@ -723,7 +751,9 @@ new IntersectionObserver(es=>{const e=es[es.length-1];const need=Math.min(e.boun
  if(!full&&was){const T=sceneEl(sc)&&sceneEl(sc).querySelector('.thought');if(T&&!T.classList.contains('done')){tRun++;pendingThought=true;T.className='thought';T.innerHTML=''}}},
  {threshold:[0,.25,.5,.75,.85,.9,.94,.97,1]}).observe(stageEl);
 const step2=d=>showScene(SC[(SC.indexOf(sc)+d+SC.length)%SC.length]);
-$('#sPrev').addEventListener('click',()=>step2(-1));$('#sNext').addEventListener('click',()=>step2(1));
+$('#sPrev').addEventListener('click',()=>step2(-1));
+{let x0=null,y0=0;stageEl.addEventListener('touchstart',e=>{if(e.touches.length===1){x0=e.touches[0].clientX;y0=e.touches[0].clientY}},{passive:true});
+ stageEl.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)step2(dx<0?1:-1)},{passive:true})}$('#sNext').addEventListener('click',()=>step2(1));
 $('#sAll').addEventListener('click',()=>$('#rooms').scrollIntoView({behavior:reduce?'auto':'smooth'}));
 $('#sDots').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showScene(b.dataset.no)});
 stageEl.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')step2(-1);if(e.key==='ArrowRight')step2(1)});
