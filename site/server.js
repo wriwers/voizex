@@ -108,8 +108,20 @@ async function route(req, res) {
     let f = path.normalize(path.join(PUB, decodeURIComponent(u.pathname)));
     if (!f.startsWith(PUB)) { res.writeHead(403); return res.end(); }
     if (u.pathname === '/' || !fs.existsSync(f) || fs.statSync(f).isDirectory()) f = path.join(PUB, 'index.html');
-    const type = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' }[path.extname(f)] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'public, max-age=300' });
+    const ext = path.extname(f);
+    const type = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.woff2': 'font/woff2', '.json': 'application/json' }[ext] || 'application/octet-stream';
+    // the page itself is re-checked often; pictures and the film are cached for a day
+    const cache = ext === '.html' ? 'no-cache' : 'public, max-age=86400';
+    const size = fs.statSync(f).size, range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+    // Safari plays video only when the server can hand it out in pieces
+    if (range && (range[1] || range[2])) {
+      let a = range[1] ? +range[1] : size - +range[2], b = range[1] && range[2] ? +range[2] : size - 1;
+      b = Math.min(b, size - 1);
+      if (a > b || a >= size) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }); return res.end(); }
+      res.writeHead(206, { 'Content-Type': type, 'Cache-Control': cache, 'Accept-Ranges': 'bytes', 'Content-Range': `bytes ${a}-${b}/${size}`, 'Content-Length': b - a + 1 });
+      return req.method === 'HEAD' ? res.end() : fs.createReadStream(f, { start: a, end: b }).pipe(res);
+    }
+    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': cache, 'Accept-Ranges': 'bytes', 'Content-Length': size });
     return req.method === 'HEAD' ? res.end() : fs.createReadStream(f).pipe(res);
   }
   res.writeHead(405); res.end();
