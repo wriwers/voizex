@@ -373,6 +373,20 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
   .floor .door{scroll-snap-align:center;scroll-snap-stop:normal}
   .mind .mv video{transition:opacity .8s ease}
 }
+
+/* 06.11: forms without outlines, door glow not cut, words never split */
+.voice b.w,.end b.w{display:inline-block;white-space:nowrap;font-weight:inherit}
+.voice span,.end span{white-space:normal}
+.form-card{border:0!important;box-shadow:none!important;background:linear-gradient(180deg,rgba(14,34,22,.55),rgba(6,19,10,.35))!important}
+.form-card::before{display:none}
+.field,.field:focus-within{border:0!important;background:none!important;border-radius:0}
+.field input,.field textarea,.field select{border-bottom:1px solid rgba(232,239,230,.18)!important;transition:border-color .4s}
+.field:focus-within input,.field:focus-within textarea,.field:focus-within select{border-bottom-color:rgba(232,239,230,.75)!important}
+.field:focus-within label{opacity:.9}
+.door.lit .pane{box-shadow:0 0 60px rgba(150,230,180,.25),0 30px 60px -30px rgba(0,0,0,.8)}
+@media (max-width:860px){
+  .floor{padding-top:70px!important;padding-bottom:70px!important;margin-top:-70px!important;margin-bottom:-62px!important}
+}
 </style>
 </head>
 <body>
@@ -715,7 +729,8 @@ async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector(
  for(const l of lines){const p=document.createElement('p');V.appendChild(p);for(let i=1;i<=l.length;i++){if(run!==tRun)return;p.textContent=l.slice(0,i);await sleep(40)}await sleep(480)}}
  await sleep(800);if(run!==tRun)return;
  const sr=slides.getBoundingClientRect(),fx=sr.left+E.f[0]/1440*sr.width,fy=sr.top+E.f[1]/900*sr.height;
- V.querySelectorAll('p').forEach(p=>{const t=p.textContent;p.innerHTML=[...t].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('')});
+ const wrapW=t=>t.split(' ').map(w=>`<b class="w">${[...w].map(c=>`<span>${esc(c)}</span>`).join('')}</b>`).join(' ');
+ V.querySelectorAll('p').forEach(p=>{p.innerHTML=wrapW(p.textContent)});
  const spans=[...V.querySelectorAll('span')];
  spans.forEach((sp,i)=>{const r=sp.getBoundingClientRect(),dx=fx-(r.left+r.width/2),dy=fy-(r.top+r.height/2),mx=dx*.45+(Math.random()-.5)*80,my=dy*.45-60-Math.random()*60;
   sp.animate([{transform:'translate(0,0) scale(1)',opacity:1,filter:'blur(0)'},{transform:`translate(${mx}px,${my}px) scale(.7)`,opacity:.9,filter:'blur(1px)',offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.08)`,opacity:0,filter:'blur(3px)'}],
@@ -725,8 +740,9 @@ async function thought(no,own){const run=++tRun,s=sceneEl(no),T=s.querySelector(
  fl.animate([{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)',offset:.25},{opacity:0,transform:'scale(1.5)'}],{duration:2200,easing:'ease-out',fill:'forwards'}).finished.then(()=>fl.remove());
  burst(no,E.f[0],E.f[1]);
  await sleep(900);if(run!==tRun)return;
- EL.innerHTML=[...E.line].map(c=>`<span>${c===' '?'&nbsp;':esc(c)}</span>`).join('');T.classList.add('done');stageEl.classList.remove('typing');
- [...EL.children].forEach((c,i)=>c.animate([{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'blur(0)'}],{duration:700,delay:i*28,fill:'both',easing:'ease-out'}));
+ EL.innerHTML=wrapW(E.line);T.classList.add('done');stageEl.classList.remove('typing');
+ const ch=[...EL.querySelectorAll('span')];ch.forEach((c,i)=>c.animate([{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'blur(0)'}],{duration:700,delay:i*28,fill:'both',easing:'ease-out'}));
+ setTimeout(()=>{if(EL.isConnected)EL.textContent=E.line},900+ch.length*28);
  await sleep(1600);if(run!==tRun)return;invite(no)}
 /* the quiz: a neural web that lights up, fades and passes signals along */
 {const cv=$('#askNet');if(cv&&!reduce){const g=cv.getContext('2d');let W,H,N=[],E=[],P=[],run=false,last=0;
@@ -827,11 +843,12 @@ $$('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('.ac
  const stage=host.querySelector('.spin'),img=stage.querySelector('img');let view='set',f=0,zoom=1,drag=null,idle=0,auto=true;
  const cache={};function preload(v){if(cache[v])return;cache[v]=[];for(let i=0;i<N[v];i++){const im=new Image();im.decoding='async';im.src=src(v,i);cache[v].push(im)}}
  const cv=document.createElement('canvas');cv.className='spincv';stage.appendChild(cv);img.style.display='none';const cx=cv.getContext('2d');
- function show(){const im=(cache[view]||[])[SEQ[view][f]];if(!im)return;const draw=()=>{const r=stage.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(cv.width!==Math.round(r.width*d)){cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d)}
+ let tok=0;function show(){const my=++tok,im=(cache[view]||[])[SEQ[view][f]];if(!im)return Promise.resolve();const draw=()=>{if(my!==tok)return;const r=stage.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(cv.width!==Math.round(r.width*d)){cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d)}
   const s=Math.max(cv.width/im.naturalWidth,cv.height/im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(im,(cv.width-w)/2,(cv.height-h)/2,w,h)};
-  if(im.complete&&im.naturalWidth)draw();else im.decode().then(draw).catch(()=>{})}
+  if(im.complete&&im.naturalWidth){draw();return Promise.resolve()}return im.decode().then(draw).catch(()=>{})}
  addEventListener('resize',()=>show());
- function setView(v){if(!N[v])v='set';view=v;f=start(v);preload(v);cv.style.opacity=0;setTimeout(()=>{show();cv.style.opacity=1},220);zoom=1;cv.style.transform='scale(1)'}
+ let sw=0;function setView(v){if(!N[v])v='set';if(v===view)return;const my=++sw;view=v;f=start(v);preload(v);zoom=1;cv.style.opacity=0;
+  Promise.all([show(),new Promise(r=>setTimeout(r,180))]).then(()=>{if(my!==sw)return;show();cv.style.transform='scale(1)';cv.style.opacity=1})}
  window.__v3dChoose=setView;window.__v3dZoom=k=>{zoom=Math.max(1,Math.min(2.6,zoom/k));cv.style.transform=`scale(${zoom})`};
  stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,f};auto=false;try{stage.setPointerCapture(e.pointerId)}catch(_){}});
  stage.addEventListener('pointermove',e=>{if(!drag)return;const step=Math.max(14,stage.clientWidth/(L(view)*(WRAP[view]?1.6:1.2)));const d=Math.round((e.clientX-drag.x)/step);const nf=WRAP[view]?((drag.f+d)%L(view)+L(view))%L(view):Math.max(0,Math.min(L(view)-1,drag.f+d));if(nf!==f){f=nf;show()}});
@@ -845,7 +862,7 @@ $$('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('.ac
  stage.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinch){e.preventDefault();const d=td(e.touches);window.__v3dZoom(pinch/d);pinch=d}},{passive:false});
  stage.addEventListener('touchend',()=>{pinch=0},{passive:true});
  stage.addEventListener('keydown',e=>{const mv=k=>{f=WRAP[view]?(f+k+L(view))%L(view):Math.max(0,Math.min(L(view)-1,f+k));show()};if(e.key==='ArrowLeft')mv(1);if(e.key==='ArrowRight')mv(-1);});
- let vis=false;new IntersectionObserver(es=>{vis=es.some(e=>e.isIntersecting);if(vis)preload(view)},{rootMargin:'300px 0px'}).observe(host);
+ let vis=false;new IntersectionObserver(es=>{vis=es.some(e=>e.isIntersecting);if(vis)Object.keys(N).forEach(preload)},{rootMargin:'600px 0px'}).observe(host);
  
  preload('set');f=start('set');show();const lp=document.getElementById('lobbyPiece');if(lp)lp.src=src('set',0);host.classList.add('ready');})();
 </script>
