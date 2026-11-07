@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - run: curl -fsS -m 120 https://voizex.onrender.com/polki/ping || curl -fsS -m 120 https://voizex.onrender.com/polki/ping
+      - run: curl -fsS -m 120 https://voizex-site.onrender.com/polki/ping || curl -fsS -m 120 https://voizex-site.onrender.com/polki/ping

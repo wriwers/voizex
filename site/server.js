@@ -130,7 +130,7 @@ async function route(req, res) {
 }
 http.createServer((req, res) => route(req, res).catch(e => { console.error(e); if (!res.headersSent) json(res, 500, { error: 'Something went wrong. Try again.' }); })).listen(PORT, async () => {
   console.log('VOIZEX on', PORT);
-  polki.init(BASE());
+  polki.init(process.env.RENDER_EXTERNAL_URL || BASE());   // вебхук — на сам Node-сервис, PUBLIC_URL указывает на статику
   try { const raw = deckFile(), pdf = deck(); console.log('deck', DECK, 'raw', raw.length, 'starts', JSON.stringify(raw.subarray(0, 8).toString('latin1')), 'pdf', pdf.length); } catch (e) { console.log('deck missing', e.message); }
   // The bot only sends cards now: no webhook, no command menu left from earlier uses.
   if (process.env.TELEGRAM_BOT_TOKEN) {
