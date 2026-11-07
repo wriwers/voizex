@@ -123,8 +123,19 @@ function cardKb(s) {
 const pickKb = () => DATA.shelves.map(s => [{ text: `${s.n}. ${s.name.slice(0, 22)}`, callback_data: 'put:' + s.n }]);
 
 // ---------- её реплики ----------
+// голосом номер звучит словом: «семь, …», «полка пять …», «третья — …»
+const NUMW = [[/^(одна|один|первая|первый|первую)(?![а-яё])/, 1], [/^(два|две|вторая|второй|вторую)(?![а-яё])/, 2], [/^(три|третья|третий|третью)(?![а-яё])/, 3],
+  [/^(четыре|четвёртая|четвертая|четвёртый|четвертый|четвёртую|четвертую)(?![а-яё])/, 4], [/^(пять|пятая|пятый|пятую)(?![а-яё])/, 5],
+  [/^(шесть|шестая|шестой|шестую)(?![а-яё])/, 6], [/^(семь|седьмая|седьмой|седьмую)(?![а-яё])/, 7]];
+function spokenNumber(text) {
+  let t = text.trim().replace(/^(полка|полку|на полку|в полку)\s+/i, '').toLowerCase();
+  for (const [re, n] of NUMW) { const m = re.exec(t); if (m) return [n, t.slice(m[0].length).replace(/^[\s.,:;—\-]+/, '')]; }
+  return null;
+}
 function route(text) {
-  const m = /^\s*([1-9])[\s.:)\-]/.exec(text + ' ');
+  const sp = spokenNumber(text);
+  if (sp && shelf(sp[0])) return [sp[0], text.trim().slice(text.trim().length - sp[1].length) || sp[1]];
+  const m = /^\s*(?:полка\s+)?([1-9])[\s.:)\-]/i.exec(text + ' ');
   if (m && shelf(m[1])) return [Number(m[1]), text.slice(m[0].length).trim()];
   const low = text.toLowerCase(), hits = new Set();
   for (const s of DATA.shelves) if ((s.keys || []).some(k => low.includes(k))) hits.add(s.n);
@@ -132,7 +143,7 @@ function route(text) {
 }
 function take(n, text) {
   const s = shelf(n), low = text.toLowerCase().trim(); let due = '';
-  const m = /\bдо\s+(\d{1,2})[./](\d{1,2})\b/.exec(low);
+  const m = /(?:^|\s)до\s+(\d{1,2})[./](\d{1,2})(?!\d)/.exec(low);
   if (m) {
     let y = Number(today().slice(0, 4)); const iso = (yy) => `${yy}-${String(m[2]).padStart(2, '0')}-${String(m[1]).padStart(2, '0')}`;
     if (Date.parse(iso(y)) < Date.parse(today()) - 30 * 864e5) y++; if (!isNaN(Date.parse(iso(y)))) due = iso(y);
@@ -265,6 +276,12 @@ async function handle(req, res, u, readBody) {
   }
   const authed = req.headers['x-polki-key'] === hm('mac');
   if (u.pathname === '/polki/state' && authed) { if (ready) await ready; j(200, DATA || {}); return true; }
+  if (req.method === 'POST' && u.pathname === '/polki/put' && authed) {
+    // правка полок из сессии Claude на маке: присылается файл целиком
+    if (ready) await ready; const b = await readBody(req, 2000000);
+    if (!b.shelves) { j(400, { error: 'нет shelves' }); return true; }
+    DATA = { ...b, chat_id: cfg().chat_id, state: b.state || DATA.state }; await flush(); j(200, { ok: true }); return true;
+  }
   if (req.method === 'POST' && u.pathname === '/polki/signal' && authed) {
     if (ready) await ready; const b = await readBody(req, 500000); const n = await onSignal(b.items); j(200, { ok: true, alerted: n }); return true;
   }
