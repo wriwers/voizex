@@ -165,6 +165,19 @@ async function transcribe(fileId) {
   } catch (e) { console.error('polki stt', e.message); return ''; }
 }
 
+// ---------- агент переписок (~/Claude/agent на маке) ----------
+// Облако только пересылает: нажатия ag:*, ответы на сообщения агента, «агент, …» и его команды.
+// Мак забирает очередь через /polki/agent каждые 5 с. Мак спит — очередь ждёт в данных.
+const AGENT_CMD = /^(агент|задача|задание|тз)[\s,:.\-—]+\S/i;
+const AGENT_WORDS = ['итог', 'итог дня', 'агент', 'отчёт', 'отчет', 'что сделал', 'что ты сделал', 'что сделал за день',
+  'что ты сделал за день', 'что агент сделал', 'тише', 'без уведомлений', 'громче', 'с уведомлениями', 'очередь', 'правила'];
+const AGENT_MSG = /^(❓ Агент|↪️ Ответила сама|🌙 Сводка|📝 Задание|✅ Написала|✅ Агент)/;
+const macAwake = () => Date.now() - (DATA.state.agentSeen || 0) < 3 * 60e3;
+function toAgent(item) {
+  (DATA.agentQ = DATA.agentQ || []).push(item); save();
+  if (!macAwake()) send('⏳ Мак спит — агент сделает это, когда мак проснётся.');
+}
+
 async function onMessage(m) {
   if (m.chat.id !== chat()) return;
   const st = DATA.state; let text = (m.text || m.caption || '').trim();
@@ -176,6 +189,12 @@ async function onMessage(m) {
   }
   if (!text) return;
   const low = text.toLowerCase();
+  const rep = m.reply_to_message;
+  const lowClean = low.replace(/[\s.!?]+$/, '');
+  if (st.agentEditing || AGENT_CMD.test(text) || AGENT_WORDS.includes(lowClean) || (rep && AGENT_MSG.test(rep.text || ''))) {
+    st.agentEditing = false;
+    return toAgent({ type: 'message', text, msg: { message_id: m.message_id, reply_to_message: rep ? { message_id: rep.message_id, text: rep.text || '' } : null } });
+  }
   if (['/start', '/board', 'полки', 'все', '/all', 'доска'].includes(low)) return send(boardText(), boardKb());
   if (['/digest', 'сводка', 'утро'].includes(low)) return digest(true);
   let [n, rest] = route(text);
@@ -192,6 +211,10 @@ async function onCallback(q) {
   api('answerCallbackQuery', { callback_query_id: q.id });   // сразу, чтобы кнопка не крутилась
   if (!q.message || q.message.chat.id !== chat()) return;
   const mid = q.message.message_id, d = q.data || '', st = DATA.state;
+  if (d.startsWith('ag:')) {
+    if (d.startsWith('ag:edit:')) st.agentEditing = true;
+    return toAgent({ type: 'callback', q: { data: d, message_id: mid } });
+  }
   if (d === 'board') return edit(mid, boardText(), boardKb());
   const [kind, a, b] = d.split(':');
   const s = shelf(a);
@@ -281,6 +304,13 @@ async function handle(req, res, u, readBody) {
     if (ready) await ready; const b = await readBody(req, 2000000);
     if (!b.shelves) { j(400, { error: 'нет shelves' }); return true; }
     DATA = { ...b, chat_id: cfg().chat_id, state: b.state || DATA.state }; await flush(); j(200, { ok: true }); return true;
+  }
+  if (u.pathname === '/polki/agent' && authed) {
+    // мак забирает очередь агента; заодно отмечается, что не спит
+    if (ready) await ready; if (!DATA) { j(503, {}); return true; }
+    const q = DATA.agentQ || []; DATA.agentQ = []; DATA.state.agentSeen = Date.now();
+    if (q.length) save();
+    j(200, { items: q }); return true;
   }
   if (req.method === 'POST' && u.pathname === '/polki/signal' && authed) {
     if (ready) await ready; const b = await readBody(req, 500000); const n = await onSignal(b.items); j(200, { ok: true, alerted: n }); return true;
