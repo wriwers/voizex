@@ -18,6 +18,7 @@ const deckPdf = () => { const b = deckFile(); return b.subarray(0, 4).toString()
 let DECK_BUF = null; const deck = () => { if (!DECK_BUF || !DECK_BUF.length) DECK_BUF = deckPdf(); return DECK_BUF; };
 const FREE = new Set('gmail.com googlemail.com yahoo.com yahoo.co.uk ymail.com outlook.com hotmail.com live.com msn.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net mail.com yandex.ru yandex.com ya.ru mail.ru inbox.ru list.ru bk.ru rambler.ru zoho.com tutanota.com tuta.io hey.com qq.com 163.com 126.com web.de t-online.de libero.it orange.fr free.fr laposte.net seznam.cz wp.pl o2.pl rediffmail.com fastmail.com hushmail.com duck.com mailinator.com guerrillamail.com 10minutemail.com tempmail.com temp-mail.org yopmail.com'.split(' '));
 const WEEK = 7 * 24 * 3600e3;
+const polki = require('./polki');   // бот «Полки» Анны, см. polki.js
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 async function tgApi(method, body) {
@@ -67,6 +68,7 @@ const FIELDS = [['name', 'Имя'], ['email', 'Email'], ['whatsapp', 'WhatsApp']
 
 async function route(req, res) {
   const u = new URL(req.url, 'http://x'), ip = ipOf(req);
+  if (await polki.handle(req, res, u, body)) return;
   if (req.method === 'POST' && u.pathname === '/api/lead') {
     if (limited('l' + ip, 10, 3600e3)) return json(res, 429, { error: 'Too many requests. Try later.' });
     const b = await body(req), kind = KINDS[b.type] ? b.type : 'client';
@@ -128,6 +130,7 @@ async function route(req, res) {
 }
 http.createServer((req, res) => route(req, res).catch(e => { console.error(e); if (!res.headersSent) json(res, 500, { error: 'Something went wrong. Try again.' }); })).listen(PORT, async () => {
   console.log('VOIZEX on', PORT);
+  polki.init(BASE());
   try { const raw = deckFile(), pdf = deck(); console.log('deck', DECK, 'raw', raw.length, 'starts', JSON.stringify(raw.subarray(0, 8).toString('latin1')), 'pdf', pdf.length); } catch (e) { console.log('deck missing', e.message); }
   // The bot only sends cards now: no webhook, no command menu left from earlier uses.
   if (process.env.TELEGRAM_BOT_TOKEN) {
